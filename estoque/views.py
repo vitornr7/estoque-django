@@ -14,13 +14,6 @@ import csv
 from .models import Estoque, Empresa, Produto
 
 
-@login_required
-def listar_produtos(request):
-    usuario = get_object_or_404(Empresa, usuario=request.user)
-    estoque = Estoque.objects.filter(empresa=usuario)
-
-    return render(request, 'estoque/custom/listar_produtos.html', {'estoque': estoque})
-
 class ProdutoListView(LoginRequiredMixin, ListView):
     model = Produto
     redirect_field_name = 'estoque:avisos'
