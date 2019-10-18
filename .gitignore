@@ -1,0 +1,6 @@
+.vscode/
+__pycache__/
+migrations/
+envtcc/
+db.sqlite3
+nohup.out
