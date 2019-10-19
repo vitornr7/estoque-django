@@ -1,6 +1,6 @@
 from django.forms import Form, ModelForm, ValidationError, HiddenInput, DateField
 
-from .models import Estoque, Produto
+from .models import Estoque, Produto, ComprasCentral
 
 
 class ProdutoForm(ModelForm):
@@ -19,3 +19,9 @@ class EstoqueAtualizarForm(ModelForm):
     class Meta():
         model = Estoque
         fields = ['baixo_estoque', 'alto_estoque']
+
+
+class ComprasCentralForm(ModelForm):
+    class Meta():
+        model = ComprasCentral
+        fields = ['quantidade', 'valor']

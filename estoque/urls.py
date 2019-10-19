@@ -13,8 +13,8 @@ urlpatterns = [
     path('detalhes_produto/<int:pk>', views.detalhes_produto, name='detalhes_produto'),
     path('alterar_produto/<int:pk>', views.atualizar_produto, name='alterar_produto'),
 
-    # path('alterar_estoque/<int:pk>', views.EstoqueUpdateView.as_view(), name='alterar_estoque'),
     path('alterar_estoque/<int:pk>', views.atualizar_estoque, name='alterar_estoque'),
+    path('acrescentar_estoque_central/<int:pk>', views.acrescentar_estoque_central, name='acrescentar_estoque_central'),
 
 
     # path('realizar_venda/<int:pk>', views.realizar_venda, name='realizar_venda'),

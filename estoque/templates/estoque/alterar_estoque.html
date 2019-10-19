@@ -6,6 +6,12 @@
 <div class="jumbotron">
     <h1>Atualizar estoque | <a href="{% url 'estoque:detalhes_produto' produto.id %}">{{ produto.nome }}</a></h1>
 
+    {% if acrescentar %}
+    <h4>Acrescentar quantidade</h4>
+    {% elif vender %}
+    <h4>Vender Produto</h4>
+    {% endif %}
+
     <hr>
 
     <form method="POST" enctype="multipart/form-data">

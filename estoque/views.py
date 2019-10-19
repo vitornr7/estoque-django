@@ -12,7 +12,7 @@ import csv
 
 from .models import Estoque, Empresa, Produto
 from .utilidades import paginar, filtrar_valor
-from .forms import ProdutoForm, EstoqueForm, EstoqueAtualizarForm
+from .forms import ProdutoForm, EstoqueForm, EstoqueAtualizarForm, ComprasCentralForm
 
 
 @login_required
@@ -124,10 +124,40 @@ def avisos(request):
     page2 = request.GET.get('apage', 1)
 
     usuario = get_object_or_404(Empresa, usuario=request.user)
-    baixo = Estoque.objects.filter(Q(empresa=usuario) & Q(quantidade__lte=F('baixo_estoque')))
-    alto = Estoque.objects.filter(Q(empresa=usuario) & Q(quantidade__gte=F('alto_estoque')))
+    baixo = Estoque.objects.filter(
+        Q(empresa=usuario) & Q(quantidade__lte=F('baixo_estoque')))
+    alto = Estoque.objects.filter(
+        Q(empresa=usuario) & Q(quantidade__gte=F('alto_estoque')))
 
     baixo = paginar(baixo, page1, 3)
     alto = paginar(alto, page2, 3)
 
     return render(request, 'estoque/avisos.html', {'baixo': baixo, 'alto': alto})
+
+
+@login_required
+def acrescentar_estoque_central(request, pk):
+    form = ComprasCentralForm()
+    produto = get_object_or_404(Produto, pk=pk)
+
+    if request.method == "POST":
+        form = ComprasCentralForm(data=request.POST)
+
+        if form.is_valid():
+            usuario = get_object_or_404(Empresa, usuario=request.user)
+
+            try:
+                estoque = Estoque.objects.get(Q(empresa=usuario) & Q(produto=produto))
+            except Estoque.DoesNotExist:
+                return HttpResponseRedirect(reverse('estoque:detalhes_produto', kwargs={'pk': produto.pk}))
+
+            data = form.save(commit=False)
+            data.produto = produto
+            data.save()
+
+            estoque.quantidade += data.quantidade
+            estoque.save()
+
+            return HttpResponseRedirect(reverse('estoque:detalhes_produto', kwargs={'pk': produto.pk}))
+
+    return render(request, 'estoque/alterar_estoque.html', {'form': form, 'produto': produto, 'acrescentar': True})
