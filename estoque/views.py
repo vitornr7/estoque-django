@@ -39,19 +39,21 @@ def listar_produtos(request):
 @login_required
 def atualizar_produto(request, pk):
     if request.user.is_superuser:
-        pass
-    pass
+        produto = get_object_or_404(Produto, pk=pk)
 
+        form = ProdutoForm(instance=produto)
 
-class ProdutoUpdateView(LoginRequiredMixin, UpdateView):
-    model = Produto
-    fields = ('nome', 'codigo', 'valor')
-    redirect_field_name = 'estoque:avisos'
+        if request.method == "POST":
+            form = ProdutoForm(data=request.POST, instance=produto)
 
-    def get_queryset(self):
-        if self.request.user.is_superuser:
-            produto = None
-        return None
+            if form.is_valid():
+                form.save()
+
+                return HttpResponseRedirect(reverse('estoque:detalhes_produto', kwargs={'pk': produto.pk}))
+
+        return render(request, 'estoque/alterar_produto.html', {'form': form, 'produto': produto})
+
+    return render(request, 'estoque/alterar_produto.html')
 
 
 @login_required

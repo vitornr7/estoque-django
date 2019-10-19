@@ -10,23 +10,23 @@
 <div class="row">
     {% if request.user.is_superuser %}
     <div class="col-lg">
-        <a href="{% url 'estoque:alterar_produto' produto.pk %}" class="btn btn-outline-primary btn-block">Atualizar
+        <a href="{% url 'estoque:alterar_produto' produto.pk %}" class="btn btn-sm btn-outline-primary btn-block">Atualizar
             Produto</a>
     </div>
 
     {% endif %}
     <div class="col-lg">
-        <a href="{% url 'estoque:alterar_estoque' produto.pk %}" class="btn btn-outline-primary btn-block">Atualizar
+        <a href="{% url 'estoque:alterar_estoque' produto.pk %}" class="btn btn-sm btn-outline-primary btn-block">Atualizar
             Estoque</a>
     </div>
     {% comment %}
     <div class="col-lg">
         <a href="{% url 'estoque:acrescentar_estoque' produto.pk %}"
-            class="btn btn-outline-primary btn-block">Acrescentar estoque</a>
+            class="btn btn-sm btn-outline-primary btn-block">Acrescentar estoque</a>
     </div>
 
     <div class="col-lg">
-        <a href="{% url 'estoque:realizar_venda' produto.pk %}" class="btn btn-outline-primary btn-block">Vender</a>
+        <a href="{% url 'estoque:realizar_venda' produto.pk %}" class="btn btn-sm btn-outline-primary btn-block">Vender</a>
     </div>
     {% endcomment %}
 </div>
