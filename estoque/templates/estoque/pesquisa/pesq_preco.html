@@ -1,0 +1,29 @@
+{% if request.GET.opcao_valor == 'entre' %}
+    {% if request.GET.valor1 and request.GET.valor2 %}
+        | Valor entre: {{ request.GET.valor1 }} e {{ request.GET.valor2 }}
+    {% elif request.GET.valor1 or request.GET.valor2 %}
+        | Valor: {{ request.GET.valor1 }} {{ request.GET.valor2 }}
+    {% else %}
+        | Valor: Tudo
+    {% endif %}
+
+{% elif request.GET.opcao_valor == 'maior' %}
+    {% if request.GET.valor1 %}
+        | Valor maior que: {{ request.GET.valor1 }}
+    {% elif request.GET.valor2 %}
+        | Valor maior que: {{ request.GET.valor2 }}
+    {% else %}
+        | Valor: Tudo
+    {% endif %}
+
+{% elif request.GET.opcao_valor == 'menor' %}
+    {% if request.GET.valor1 %}
+        | Valor menor que:  {{ request.GET.valor1 }}
+    {% elif request.GET.valor2 %}
+        | Valor menor que:  {{ request.GET.valor2 }}
+    {% else %}
+        | Valor: Tudo
+    {% endif %}
+{% else %}
+    | Valor: Tudo
+{% endif %}

@@ -1,0 +1,29 @@
+{% if request.GET.opcao_data == 'entre' %}
+    {% if request.GET.d1 and request.GET.d2 %}
+        | Data entre: {{ info.data1|date:"d/m/Y" }} e {{ info.data2|date:"d/m/Y" }}
+    {% elif request.GET.d1 or request.GET.d2 %}
+        | Data: {{ info.data1|date:"d/m/Y" }} {{ info.data2|date:"d/m/Y" }}
+    {% else %}
+        | Data: Tudo
+    {% endif %}
+
+{% elif request.GET.opcao_data == 'maior' %}
+    {% if request.GET.d1 %}
+        | Data maior que:  {{ info.data1|date:"d/m/Y" }}
+    {% elif request.GET.d2 %}
+        | Data maior que:  {{ info.data2|date:"d/m/Y" }}
+    {% else %}
+        | Data: Tudo
+    {% endif %}
+
+{% elif request.GET.opcao_data == 'menor' %}
+    {% if request.GET.d1 %}
+        | Data menor que: {{ info.data1|date:"d/m/Y" }}
+    {% elif request.GET.d2 %}
+        | Data menor que: {{ info.data2|date:"d/m/Y" }}
+    {% else %}
+        | Data: Tudo
+    {% endif %}
+{% else %}
+    | Data: Tudo
+{% endif %}

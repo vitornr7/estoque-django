@@ -12,6 +12,7 @@ from django.contrib.auth import authenticate, login, logout
 import csv
 
 from .models import Estoque, Empresa, Produto
+from .utilidades import paginar, filtrar_valor
 
 
 class ProdutoListView(LoginRequiredMixin, ListView):
@@ -22,15 +23,15 @@ class ProdutoListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         produtos = Produto.objects.all().order_by('nome')
 
-        # query = self.request.GET.get('q')
-        # valor1 = self.request.GET.get('valor1')
-        # valor2 = self.request.GET.get('valor2')
-        # opcao_valor = self.request.GET.get('opcao_valor')
+        query = self.request.GET.get('q')
+        valor1 = self.request.GET.get('valor1')
+        valor2 = self.request.GET.get('valor2')
+        opcao_valor = self.request.GET.get('opcao_valor')
 
-        # if query:
-        #     produtos = Produto.objects.filter(Q(nome__icontains=query) | Q(codigo__icontains=query)).order_by('nome')
-        # if produtos:
-        #     produtos = filtrar_valor(produtos, opcao_valor, valor1, valor2)
+        if query:
+            produtos = Produto.objects.filter(Q(nome__icontains=query) | Q(codigo__icontains=query)).order_by('nome')
+        if produtos:
+            produtos = filtrar_valor(produtos, opcao_valor, valor1, valor2)
 
         return produtos
 
@@ -61,15 +62,3 @@ def avisos(request):
     alto = paginar(alto, page2, 7)
 
     return render(request, 'estoque/custom/avisos.html', {'baixo': baixo, 'alto': alto})
-
-
-def paginar(objs, page, n_linhas):
-    paginator = Paginator(objs, n_linhas)
-    try:
-        objs = paginator.page(page)
-    except PageNotAnInteger:
-        objs = paginator.page(1)
-    except EmptyPage:
-        objs = paginator.page(paginator.num_pages)
-
-    return objs
