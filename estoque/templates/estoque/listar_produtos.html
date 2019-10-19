@@ -19,8 +19,10 @@
     </div>
 </form>
 
-{% comment %}
-<a href="{% url 'estoque:cadastrar_produto' %}" class="btn btn-outline-success btn-block">Cadastar Produto</a>{% endcomment %}
+{% if request.user.is_superuser %}
+<a href="{% url 'estoque:cadastrar_produto' %}" class="btn btn-outline-success btn-block btn-sm">Cadastar Produto</a>
+{% endif %}
+
 <hr>
 
 <h6>
@@ -46,7 +48,7 @@
         </tr>
     </thead>
     <tbody>
-        {% for prod in produto_list %}
+        {% for prod in produtos %}
         <tr>
             <td>
                 <a href="{% url 'estoque:detalhes_produto' prod.id %}">{{ prod.codigo }}</a>
@@ -75,26 +77,30 @@
     </tbody>
 </table>
 
-{% if is_paginated %}
+{% if produtos.has_other_pages %}
+
 <ul class="pagination float-right">
     <li class="page-item">
-        <span class="page-link">{{ page_obj.number }}/{{ page_obj.paginator.num_pages }}</span>
+        <span class="page-link">{{ produtos.number }}/{{ produtos.paginator.num_pages }}</span>
     </li>
-    {% if page_obj.has_previous %}
+
+    {% if produtos.has_previous %}
     <li class="page-item"><a class="page-link"
-            href="?opcao_valor={{ request.GET.opcao_valor }}&valor1={{ request.GET.valor1 }}&valor2={{ request.GET.valor2 }}&q={{ request.GET.q }}&page={{ page_obj.previous_page_number }}">Anterior</a>
+            href="?opcao_valor={{ request.GET.opcao_valor }}&valor1={{ request.GET.valor1 }}&valor2={{ request.GET.valor2 }}&q={{ request.GET.q }}&page={{ produtos.previous_page_number }}">Anterior</a>
     </li>
     {% else %}
     <li class="page-item disabled"><span class="page-link">Anterior</span></li>
     {% endif %}
 
-    {% if page_obj.has_next %}
+    {% if produtos.has_next %}
     <li class="page-item"><a class="page-link"
-            href="?opcao_valor={{ request.GET.opcao_valor }}&valor1={{ request.GET.valor1 }}&valor2={{ request.GET.valor2 }}&q={{ request.GET.q }}&page={{ page_obj.next_page_number }}">Proxima</a>
+            href="?opcao_valor={{ request.GET.opcao_valor }}&valor1={{ request.GET.valor1 }}&valor2={{ request.GET.valor2 }}&q={{ request.GET.q }}&page={{ produtos.next_page_number }}">Proxima</a>
     </li>
     {% else %}
     <li class="page-item disabled"><span class="page-link">Proxima</span></li>
     {% endif %}
+
 </ul>
 {% endif %}
+
 {% endblock %}

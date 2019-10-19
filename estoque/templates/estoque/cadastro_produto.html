@@ -1,0 +1,27 @@
+{% extends 'estoque/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block corpo %}
+
+<div class="jumbotron">
+    {% if request.user.is_superuser %}
+    <h1>Cadastrar produto</h1>
+    <hr>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ produto_form|crispy }}
+        {{ estoque_form|crispy }}
+        <hr>
+        <input type="submit" value="Salvar" class="btn btn-success btn-block">
+    </form>
+
+    {% else %}
+    <h3>Você não possui permissão para concluir esta ação.</h3>
+    <hr>
+    <a href="{% url 'estoque:avisos' %}" class="btn btn-block btn-primary">Retornar</a>
+</div>
+
+{% endif %}
+
+{% endblock %}

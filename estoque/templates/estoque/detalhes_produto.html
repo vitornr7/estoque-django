@@ -5,23 +5,34 @@
 
 <h1>Detalhes do Produto: {{ produto.nome }}</h1>
 
-{% comment %}
 <hr>
 
 <div class="row">
+    {% if request.user.is_superuser %}
     <div class="col-lg">
         <a href="{% url 'estoque:alterar_produto' produto.pk %}" class="btn btn-outline-primary btn-block">Atualizar
-            Informações</a>
+            Produto</a>
     </div>
+
+    {% endif %}
+    <div class="col-lg">
+        <a href="{% url 'estoque:alterar_estoque' produto.pk %}" class="btn btn-outline-primary btn-block">Atualizar
+            Estoque</a>
+    </div>
+    {% comment %}
     <div class="col-lg">
         <a href="{% url 'estoque:acrescentar_estoque' produto.pk %}"
             class="btn btn-outline-primary btn-block">Acrescentar estoque</a>
     </div>
+
     <div class="col-lg">
         <a href="{% url 'estoque:realizar_venda' produto.pk %}" class="btn btn-outline-primary btn-block">Vender</a>
     </div>
+    {% endcomment %}
 </div>
 
+
+{% comment %}
 <br>
 
 <form method="GET" action="{% url 'estoque:relatorio_produto' produto.pk %}">
@@ -63,13 +74,11 @@
         <td colspan="2">
             <strong>
                 {% if estoque.quantidade > 0 %}
-                Em estoque
+                Disponível no estoque
                 {% else %}
                 Produto não disponivel no estoque
                 {% if not request.user.is_superuser %}
-                <hr>
-                <a href="#" class="btn btn-sm btn-primary btn-block">Contactar central</a>
-                {% endif %}
+                <hr><a href="#" class="btn btn-sm btn-primary btn-block">Contactar central</a>{% endif %}
                 {% endif %}
             </strong>
         </td>

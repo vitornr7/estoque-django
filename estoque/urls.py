@@ -8,10 +8,13 @@ urlpatterns = [
     path('', views.avisos, name='index'),
     path('avisos', views.avisos, name='avisos'),
 
-    path('listar_produtos/', views.ProdutoListView.as_view(), name='listar_produtos'),
-    # path('cadastrar_produto/', views.ProdutoCreateView.as_view(), name='cadastrar_produto'),
+    path('listar_produtos/', views.listar_produtos, name='listar_produtos'),
+    path('cadastrar_produto/', views.cadastrar_produto, name='cadastrar_produto'),
     path('detalhes_produto/<int:pk>', views.detalhes_produto, name='detalhes_produto'),
-    # path('alterar_produto/<int:pk>', views.ProdutoUpdateView.as_view(), name='alterar_produto'),
+    path('alterar_produto/<int:pk>', views.atualizar_produto, name='alterar_produto'),
+
+    # path('alterar_estoque/<int:pk>', views.EstoqueUpdateView.as_view(), name='alterar_estoque'),
+    path('alterar_estoque/<int:pk>', views.atualizar_estoque, name='alterar_estoque'),
 
 
     # path('realizar_venda/<int:pk>', views.realizar_venda, name='realizar_venda'),

@@ -45,6 +45,9 @@ class Estoque(models.Model):
                 fields=['empresa', 'produto'], name='empresa_produto'),
         ]
 
+    def get_absolute_url(self):
+        return reverse("estoque:detalhes_produto", args=[str(self.id)])
+
     def clean(self):
         if self.baixo_estoque > self.alto_estoque:
             raise ValidationError(
