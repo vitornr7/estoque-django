@@ -5,7 +5,6 @@ from django.urls import reverse
 from datetime import datetime
 from django.utils import formats, timezone
 from django.db.models import Sum, F, Q
-from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout

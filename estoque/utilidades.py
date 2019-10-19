@@ -1,3 +1,5 @@
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+
 def filtrar_valor(objs, opcao_valor, valor1, valor2):
     if opcao_valor == 'entre':
         if valor1 and valor2:
