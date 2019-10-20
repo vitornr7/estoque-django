@@ -12,7 +12,7 @@ import csv
 
 from .models import Estoque, Empresa, Produto
 from .utilidades import paginar, filtrar_valor
-from .forms import ProdutoForm, EstoqueForm, EstoqueAtualizarForm, ComprasCentralForm
+from .forms import ProdutoForm, EstoqueForm, EstoqueAtualizarForm, ComprasCentralForm, VendasFilialForm
 
 
 @login_required
@@ -161,3 +161,39 @@ def acrescentar_estoque_central(request, pk):
             return HttpResponseRedirect(reverse('estoque:detalhes_produto', kwargs={'pk': produto.pk}))
 
     return render(request, 'estoque/alterar_estoque.html', {'form': form, 'produto': produto, 'acrescentar': True})
+
+
+@login_required
+def filial_vender(request, pk):
+    if request.user.is_superuser:
+        pass
+
+    produto = get_object_or_404(Produto, pk=pk)
+    empresa = get_object_or_404(Empresa, usuario=request.user)
+
+    try:
+        estoque = Estoque.objects.get(Q(empresa=empresa) & Q(produto=produto))
+    except Estoque.DoesNotExist:
+        return HttpResponseRedirect(reverse('estoque:detalhes_produto', kwargs={'pk': produto.pk}))
+
+    form = VendasFilialForm(estoque)
+
+    if request.method == "POST":
+        form = VendasFilialForm(estoque, data=request.POST)
+
+        if form.is_valid():
+            data = form.save(commit=False)
+            data.empresa = empresa
+            data.produto = produto
+
+            valor = produto.valor * data.quantidade
+            data.valor = valor
+
+            data.save()
+
+            estoque.quantidade -= data.quantidade
+            estoque.save()
+
+            return HttpResponseRedirect(reverse('estoque:detalhes_produto', kwargs={'pk': produto.pk}))
+
+    return render(request, 'estoque/filial_vender.html', {'form': form, 'produto': produto})

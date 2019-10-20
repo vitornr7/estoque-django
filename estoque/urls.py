@@ -17,7 +17,7 @@ urlpatterns = [
     path('acrescentar_estoque_central/<int:pk>', views.acrescentar_estoque_central, name='acrescentar_estoque_central'),
 
 
-    # path('realizar_venda/<int:pk>', views.realizar_venda, name='realizar_venda'),
+    path('filial_vender/<int:pk>', views.filial_vender, name='filial_vender'),
 
     # path('acrescentar_estoque/<int:pk>', views.acrescentar_estoque, name='acrescentar_estoque'),
 

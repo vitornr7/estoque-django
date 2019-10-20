@@ -57,7 +57,7 @@ class Estoque(models.Model):
         return self.empresa.usuario.username + ' - ' + self.produto.nome
 
 
-class Vendas(models.Model):
+class VendasFilial(models.Model):
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
     produto = models.ForeignKey(Produto, on_delete=models.CASCADE)
     quantidade = models.PositiveIntegerField(
