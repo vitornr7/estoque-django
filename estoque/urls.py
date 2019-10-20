@@ -9,15 +9,16 @@ urlpatterns = [
     path('avisos', views.avisos, name='avisos'),
 
     path('listar_produtos/', views.listar_produtos, name='listar_produtos'),
-    path('cadastrar_produto/', views.cadastrar_produto, name='cadastrar_produto'),
     path('detalhes_produto/<int:pk>', views.detalhes_produto, name='detalhes_produto'),
+    path('alterar_estoque/<int:pk>', views.atualizar_estoque, name='alterar_estoque'),
+
+    path('cadastrar_produto/', views.cadastrar_produto, name='cadastrar_produto'),
     path('alterar_produto/<int:pk>', views.atualizar_produto, name='alterar_produto'),
 
-    path('alterar_estoque/<int:pk>', views.atualizar_estoque, name='alterar_estoque'),
     path('acrescentar_estoque_central/<int:pk>', views.acrescentar_estoque_central, name='acrescentar_estoque_central'),
 
-
     path('filial_vender/<int:pk>', views.filial_vender, name='filial_vender'),
+    path('filial_pedido/<int:pk>', views.filial_pedido, name='filial_pedido'),
 
     # path('acrescentar_estoque/<int:pk>', views.acrescentar_estoque, name='acrescentar_estoque'),
 

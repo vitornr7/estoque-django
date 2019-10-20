@@ -199,7 +199,29 @@ def filial_vender(request, pk):
     return render(request, 'estoque/filial_vender.html', {'form': form, 'produto': produto})
 
 
-
 @login_required
-def filial_pedido(request):
-    pass
+def filial_pedido(request, pk):
+    if request.user.is_superuser:
+        return render(request, 'estoque/filial_pedido.html')
+
+    form = PedidosFilialForm()
+    produto = get_object_or_404(Produto, pk=pk)
+
+    if request.method == "POST":
+        form = PedidosFilialForm(data=request.POST)
+
+        if form.is_valid():
+            empresa = get_object_or_404(Empresa, usuario=request.user)
+
+            data = form.save(commit=False)
+            data.empresa = empresa
+            data.produto = produto
+
+            valor = produto.valor * data.quantidade
+            data.valor = valor
+
+            data.save()
+
+            return HttpResponseRedirect(reverse('estoque:detalhes_produto', kwargs={'pk': produto.pk}))
+
+    return render(request, 'estoque/filial_pedido.html', {'form': form, 'produto': produto})

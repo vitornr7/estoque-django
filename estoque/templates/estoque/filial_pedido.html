@@ -1,0 +1,25 @@
+{% extends 'estoque/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block corpo %}
+
+<div class="jumbotron">
+    {% if request.user.is_superuser %}
+    <h3>Função destinada apenas para vendas feitas por filiais.</h3>
+    <hr>
+    <a href="{% url 'estoque:avisos' %}" class="btn btn-block btn-primary">Retornar</a>
+    {% else %}
+
+    <h1>Fazer pedido | <a href="{% url 'estoque:detalhes_produto' produto.id %}">{{ produto.nome }}</a></h1>
+
+    <hr>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <hr>
+        <input type="submit" value="Salvar" class="btn btn-success btn-block">
+    </form>
+    {% endif %}
+</div>
+{% endblock %}

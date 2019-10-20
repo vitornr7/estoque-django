@@ -21,8 +21,13 @@
     </div>
     {% else %}
     <div class="col-lg">
-        <a href="{% url 'estoque:filial_vender' produto.pk %}"
-            class="btn btn-sm btn-outline-primary btn-block">Realizar Venda</a>
+        <a href="{% url 'estoque:filial_vender' produto.pk %}" class="btn btn-sm btn-outline-primary btn-block">Realizar
+            Venda</a>
+    </div>
+
+    <div class="col-lg">
+        <a href="{% url 'estoque:filial_pedido' produto.pk %}"
+            class="btn btn-sm btn-outline-primary btn-block">Fazer Pedido</a>
     </div>
     {% endif %}
 
