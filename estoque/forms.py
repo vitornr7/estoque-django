@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from django.forms import Form, ModelForm, ValidationError, HiddenInput, DateField
 
-from .models import Estoque, Produto, ComprasCentral, VendasFilial, Empresa
+from .models import Estoque, Produto, ComprasCentral, VendasFilial, Empresa, PedidosFilial
 
 
 class ProdutoForm(ModelForm):
@@ -45,3 +45,9 @@ class VendasFilialForm(ModelForm):
             raise ValidationError("Tentativa de venda com quantidade maior que a disponivel: " + str(estoque_qtd))
 
         return quantidade
+
+
+class PedidosFilialForm(ModelForm):
+    class Meta():
+        model = PedidosFilial
+        fields = ['quantidade']

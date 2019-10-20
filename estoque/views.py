@@ -12,7 +12,7 @@ import csv
 
 from .models import Estoque, Empresa, Produto
 from .utilidades import paginar, filtrar_valor
-from .forms import ProdutoForm, EstoqueForm, EstoqueAtualizarForm, ComprasCentralForm, VendasFilialForm
+from .forms import ProdutoForm, EstoqueForm, EstoqueAtualizarForm, ComprasCentralForm, VendasFilialForm, PedidosFilialForm
 
 
 @login_required
@@ -166,7 +166,7 @@ def acrescentar_estoque_central(request, pk):
 @login_required
 def filial_vender(request, pk):
     if request.user.is_superuser:
-        pass
+        return render(request, 'estoque/filial_vender.html')
 
     produto = get_object_or_404(Produto, pk=pk)
     empresa = get_object_or_404(Empresa, usuario=request.user)
@@ -197,3 +197,9 @@ def filial_vender(request, pk):
             return HttpResponseRedirect(reverse('estoque:detalhes_produto', kwargs={'pk': produto.pk}))
 
     return render(request, 'estoque/filial_vender.html', {'form': form, 'produto': produto})
+
+
+
+@login_required
+def filial_pedido(request):
+    pass
