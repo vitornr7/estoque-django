@@ -84,8 +84,6 @@
                 Disponível no estoque
                 {% else %}
                 Produto não disponivel no estoque
-                {% if not request.user.is_superuser %}
-                <hr><a href="#" class="btn btn-sm btn-primary btn-block">Contactar central</a>{% endif %}
                 {% endif %}
             </strong>
         </td>
