@@ -296,4 +296,18 @@ def aprovar_pedido(request, pk):
 
 
 def reprovar_pedido(request, pk):
-    return render(request, 'estoque/aprovar_pedido.html', {'aprovar': False, })
+    if request.user.is_superuser:
+        pedido = PedidosFilial.objects.get(pk=pk)
+
+        if pedido.status == PedidosFilial.REPROVADO:
+            return render(request, 'estoque/aprovar_pedido.html', {'pedido': pedido, 'ja_aprovado': True})
+
+        if request.method == "POST":
+            pedido.status = PedidosFilial.REPROVADO
+            pedido.save()
+
+            return HttpResponseRedirect(reverse('estoque:listar_pedidos'))
+
+        return render(request, 'estoque/aprovar_pedido.html', {'pedido': pedido, 'aprovar': False})
+
+    return render(request, 'estoque/aprovar_pedido.html')
