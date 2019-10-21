@@ -23,6 +23,8 @@ urlpatterns = [
     path('listar_filiais/', views.listar_filiais, name='listar_filiais'),
     path('listar_vendas/', views.listar_vendas, name='listar_vendas'),
 
+    path('listar_compras_central/', views.listar_compras_central, name='listar_compras_central'),
+
     path('filial_vender/<int:pk>', views.filial_vender, name='filial_vender'),
     path('filial_pedido/<int:pk>', views.filial_pedido, name='filial_pedido'),
 

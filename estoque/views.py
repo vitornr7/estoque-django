@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 import csv
 
-from .models import Estoque, Empresa, Produto, PedidosFilial, VendasFilial
+from .models import Estoque, Empresa, Produto, PedidosFilial, VendasFilial, ComprasCentral
 from .utilidades import paginar, filtrar_valor
 from .forms import ProdutoForm, EstoqueForm, EstoqueAtualizarForm, ComprasCentralForm, VendasFilialForm, PedidosFilialForm, UsuarioForm, FilialForm
 
@@ -372,5 +372,14 @@ def listar_vendas(request):
 
 
 @login_required
-def compras_central(request):
-    pass
+def listar_compras_central(request):
+    if request.user.is_superuser:
+        page = request.GET.get('page', 1)
+
+        compras = ComprasCentral.objects.all()
+
+        compras = paginar(compras, page, 3)
+
+        return render(request, 'estoque/listar_compras_central.html', {'compras': compras})
+
+    return render(request, 'estoque/listar_compras_central.html')
