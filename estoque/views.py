@@ -244,7 +244,8 @@ def listar_pedidos(request):
         pedidos = PedidosFilial.objects.filter(status=status_pedido)
     else:
         usuario = get_object_or_404(Empresa, usuario=request.user)
-        pedidos = PedidosFilial.objects.filter(Q(status=status_pedido) & Q(empresa=usuario))
+        pedidos = PedidosFilial.objects.filter(
+            Q(status=status_pedido) & Q(empresa=usuario))
 
     # if query:
     #     produtos = Produto.objects.filter(Q(nome__icontains=query) | Q(
@@ -254,8 +255,45 @@ def listar_pedidos(request):
 
     pedidos = paginar(pedidos, page, 3)
 
-    return render(request, 'estoque/listar_pedidos.html', {'pedidos': pedidos})
+    return render(request, 'estoque/listar_pedidos.html', {'pedidos': pedidos, 'status_pedido': status_pedido})
 
 
-def aprovar_pedido(request):
-    pass
+def aprovar_pedido(request, pk):
+    if request.user.is_superuser:
+        pedido = PedidosFilial.objects.get(pk=pk)
+
+        if pedido.status == PedidosFilial.APROVADO:
+            return render(request, 'estoque/aprovar_pedido.html', {'pedido': pedido, 'ja_aprovado': True})
+
+        if request.method == "POST":
+            filial = get_object_or_404(Empresa, pk=pedido.empresa.pk)
+            central = get_object_or_404(Empresa, usuario=request.user)
+
+            try:
+                estoque_central = Estoque.objects.get(empresa=central, produto=pedido.produto)
+            except Estoque.DoesNotExist:
+                return HttpResponseRedirect(reverse('estoque:listar_pedidos'))
+
+            if pedido.quantidade > estoque_central.quantidade:
+                return render(request, 'estoque/aprovar_pedido.html', {'pedido': pedido, 'aprovar': True, 'quantidade_maior': True, 'quantidade': estoque_central.quantidade})
+
+            estoque_filial, criado = Estoque.objects.get_or_create(empresa=filial, produto=pedido.produto)
+
+            estoque_central.quantidade -= pedido.quantidade
+            estoque_central.save()
+
+            estoque_filial.quantidade += pedido.quantidade
+            estoque_filial.save()
+
+            pedido.status = PedidosFilial.APROVADO
+            pedido.save()
+
+            return HttpResponseRedirect(reverse('estoque:listar_pedidos'))
+
+        return render(request, 'estoque/aprovar_pedido.html', {'pedido': pedido, 'aprovar': True})
+
+    return render(request, 'estoque/aprovar_pedido.html')
+
+
+def reprovar_pedido(request, pk):
+    return render(request, 'estoque/aprovar_pedido.html', {'aprovar': False, })

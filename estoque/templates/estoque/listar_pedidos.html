@@ -75,6 +75,7 @@
             <th scope="col">Data</th>
             <th scope="col">Quantidade</th>
             <th scope="col">Valor</th>
+            {% if request.user.is_superuser and status_pedido == 0 %}<th scope="col">Opções</th>{% endif %}
         </tr>
     </thead>
     <tbody>
@@ -90,7 +91,7 @@
             </td>
             {% endif %}
             <td>
-                {{ pedido.produto }}
+                <a href="{% url 'estoque:detalhes_produto' pedido.produto.id %}">{{ pedido.produto }}</a>
             </td>
             <td>
                 {{ pedido.data }}
@@ -101,6 +102,12 @@
             <td>
                 {{ pedido.valor }}
             </td>
+            {% if request.user.is_superuser and status_pedido == 0 %}
+            <td>
+                <a href="{% url 'estoque:aprovar_pedido' pedido.id %}" class="badge badge-pill badge-success">Aprovar</a>
+                <a href="{% url 'estoque:reprovar_pedido' pedido.id %}" class="badge badge-pill badge-danger">Reprovar</a>
+            </td>
+            {% endif %}
         </tr>
 
         {% empty %}

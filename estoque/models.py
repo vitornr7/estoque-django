@@ -23,7 +23,7 @@ class Empresa(models.Model):
     usuario = models.OneToOneField(User, on_delete=models.CASCADE)
     # true = filial | false = central
     filial = models.BooleanField(default=True)
-    endereço = models.CharField(max_length=50)
+    endereco = models.CharField(max_length=50)
 
     def __str__(self):
         return self.usuario.username

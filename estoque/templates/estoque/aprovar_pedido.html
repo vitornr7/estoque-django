@@ -1,0 +1,68 @@
+{% extends "estoque/base.html" %}
+
+{% block corpo %}
+
+{% if request.user.is_superuser %}
+
+{% if ja_aprovado %}
+<h1>Este pedido já foi aprovado!</h1>
+{% else %}
+
+{% if aprovar %}
+<h1>Confirmar aprovação do pedido</h1>
+{% else %}
+<h1>Confirmar reprovação do pedido</h1>
+{% endif %}
+
+{% endif %}
+
+<hr>
+
+<table class="table table-striped table-bordered">
+    <tr>
+        <td>Emrepsa</td>
+        <td>{{ pedido.empresa }}</td>
+    </tr>
+    <tr>
+        <td>Endereço</td>
+        <td>{{ pedido.empresa.endereco }}</td>
+    </tr>
+    <tr>
+        <td>Produto</td>
+        <td>{{ pedido.produto }}</td>
+    </tr>
+    <tr>
+        <td>Quantidade</td>
+        <td>{{ pedido.quantidade }}</td>
+    </tr>
+    <tr>
+        <td>Valor</td>
+        <td>{{ pedido.valor }}</td>
+    </tr>
+    <tr>
+        <td>Data</td>
+        <td>{{ pedido.data }}</td>
+    </tr>
+</table>
+
+{% if quantidade_maior %}
+    <font color="red"><h2>Erro: Quantidade do pedido maior do que a disponível no estoque.</h2></font>
+    <h4>Disponível: {{ quantidade }}</h4>
+{% endif %}
+
+{% if not ja_aprovado %}
+<form method="POST">
+    {% csrf_token %}
+    <input type="submit" value="{% if aprovar %}Aprovar{% else %}Reprovar{% endif %}" class="btn {% if aprovar %} btn-success {% else %} btn-danger {% endif %} btn-block">
+</form>
+{% endif %}
+
+{% else %}
+
+<h3>Você não possui permissão para concluir esta ação.</h3>
+<hr>
+<a href="{% url 'estoque:avisos' %}" class="btn btn-block btn-primary">Retornar</a>
+
+{% endif %}
+
+{% endblock %}
