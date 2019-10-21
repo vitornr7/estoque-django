@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 import csv
 
-from .models import Estoque, Empresa, Produto
+from .models import Estoque, Empresa, Produto, PedidosFilial
 from .utilidades import paginar, filtrar_valor
 from .forms import ProdutoForm, EstoqueForm, EstoqueAtualizarForm, ComprasCentralForm, VendasFilialForm, PedidosFilialForm
 
@@ -147,7 +147,8 @@ def acrescentar_estoque_central(request, pk):
             usuario = get_object_or_404(Empresa, usuario=request.user)
 
             try:
-                estoque = Estoque.objects.get(Q(empresa=usuario) & Q(produto=produto))
+                estoque = Estoque.objects.get(
+                    Q(empresa=usuario) & Q(produto=produto))
             except Estoque.DoesNotExist:
                 return HttpResponseRedirect(reverse('estoque:detalhes_produto', kwargs={'pk': produto.pk}))
 
@@ -225,3 +226,36 @@ def filial_pedido(request, pk):
             return HttpResponseRedirect(reverse('estoque:detalhes_produto', kwargs={'pk': produto.pk}))
 
     return render(request, 'estoque/filial_pedido.html', {'form': form, 'produto': produto})
+
+
+@login_required
+def listar_pedidos(request):
+    page = request.GET.get('page', 1)
+    status_pedido = request.GET.get('status_pedido')
+
+    if status_pedido == 'aprovado':
+        status_pedido = PedidosFilial.APROVADO
+    elif status_pedido == 'reprovado':
+        status_pedido = PedidosFilial.REPROVADO
+    else:
+        status_pedido = PedidosFilial.ABERTO
+
+    if request.user.is_superuser:
+        pedidos = PedidosFilial.objects.filter(status=status_pedido)
+    else:
+        usuario = get_object_or_404(Empresa, usuario=request.user)
+        pedidos = PedidosFilial.objects.filter(Q(status=status_pedido) & Q(empresa=usuario))
+
+    # if query:
+    #     produtos = Produto.objects.filter(Q(nome__icontains=query) | Q(
+    #         codigo__icontains=query))
+    # if produtos:
+    #     produtos = filtrar_valor(produtos, opcao_valor, valor1, valor2)
+
+    pedidos = paginar(pedidos, page, 3)
+
+    return render(request, 'estoque/listar_pedidos.html', {'pedidos': pedidos})
+
+
+def aprovar_pedido(request):
+    pass

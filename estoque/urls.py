@@ -20,6 +20,8 @@ urlpatterns = [
     path('filial_vender/<int:pk>', views.filial_vender, name='filial_vender'),
     path('filial_pedido/<int:pk>', views.filial_pedido, name='filial_pedido'),
 
+    path('listar_pedidos/', views.listar_pedidos, name='listar_pedidos'),
+
     # path('acrescentar_estoque/<int:pk>', views.acrescentar_estoque, name='acrescentar_estoque'),
 
 
