@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 import csv
 
-from .models import Estoque, Empresa, Produto, PedidosFilial
+from .models import Estoque, Empresa, Produto, PedidosFilial, VendasFilial
 from .utilidades import paginar, filtrar_valor
 from .forms import ProdutoForm, EstoqueForm, EstoqueAtualizarForm, ComprasCentralForm, VendasFilialForm, PedidosFilialForm, UsuarioForm, FilialForm
 
@@ -354,3 +354,23 @@ def listar_filiais(request):
 
         return render(request, 'estoque/listar_filiais.html', {'filiais': filiais})
     return render(request, 'estoque/listar_filiais.html')
+
+
+@login_required
+def listar_vendas(request):
+    page = request.GET.get('page', 1)
+
+    if request.user.is_superuser:
+        vendas = VendasFilial.objects.all()
+    else:
+        usuario = get_object_or_404(Empresa, usuario=request.user)
+        vendas = VendasFilial.objects.filter(empresa=usuario)
+
+    vendas = paginar(vendas, page, 3)
+
+    return render(request, 'estoque/listar_vendas.html', {'vendas': vendas})
+
+
+@login_required
+def compras_central(request):
+    pass
