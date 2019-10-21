@@ -258,6 +258,7 @@ def listar_pedidos(request):
     return render(request, 'estoque/listar_pedidos.html', {'pedidos': pedidos, 'status_pedido': status_pedido})
 
 
+@login_required
 def aprovar_pedido(request, pk):
     if request.user.is_superuser:
         pedido = PedidosFilial.objects.get(pk=pk)
@@ -295,6 +296,7 @@ def aprovar_pedido(request, pk):
     return render(request, 'estoque/aprovar_pedido.html')
 
 
+@login_required
 def reprovar_pedido(request, pk):
     if request.user.is_superuser:
         pedido = PedidosFilial.objects.get(pk=pk)
