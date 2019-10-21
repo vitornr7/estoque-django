@@ -1,5 +1,6 @@
 from django.shortcuts import render, get_object_or_404
 from django.forms import Form, ModelForm, ValidationError, HiddenInput, DateField
+from django.contrib.auth.models import User
 
 from .models import Estoque, Produto, ComprasCentral, VendasFilial, Empresa, PedidosFilial
 
@@ -26,6 +27,18 @@ class ComprasCentralForm(ModelForm):
     class Meta():
         model = ComprasCentral
         fields = ['quantidade', 'valor']
+
+
+class UsuarioForm(ModelForm):
+    class Meta():
+        model = User
+        fields = ('username', 'email', 'password')
+
+
+class FilialForm(ModelForm):
+    class Meta():
+        model = Empresa
+        fields = ('endereco', )
 
 
 class VendasFilialForm(ModelForm):

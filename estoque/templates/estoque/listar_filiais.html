@@ -1,0 +1,109 @@
+{% extends 'estoque/base.html' %}
+
+{% block corpo %}
+
+{% if request.user.is_superuser %}
+
+<h1>Filiais</h1>
+
+<hr>
+
+{% comment %}
+<form class="form-group" method="GET" action="{% url 'estoque:listar_produtos' %}">
+    {% include 'estoque/pesquisa/precos.html' %}
+
+    <div class="form-row align-items-center">
+        <div class="form-group col">
+            <input class="form-control form-control-sm" type="text" placeholder="Nome/Cod" aria-label="Search" name="q">
+        </div>
+        <div class="form-group col">
+            <button class="btn btn-outline-primary btn-sm" type="submit">Pesquisar</button>
+        </div>
+    </div>
+</form>
+{% endcomment %}
+
+<a href="{% url 'estoque:cadastar_filial' %}" class="btn btn-outline-success btn-block btn-sm">Cadastar Filial</a>
+
+
+{% comment %}
+<hr>
+
+<h6>
+    Resultado da busca
+
+    {% if request.GET.q %}
+    | Nome: {{ request.GET.q }}
+    {% else %}
+    | Nome: Tudo
+    {% endif %}
+
+    {% include 'estoque/pesquisa/pesq_preco.html' %}
+</h6>
+{% endcomment %}
+
+<hr>
+
+<table class="table table-striped table-bordered table-sm">
+    <thead class="thead-dark">
+        <tr>
+            <th scope="col">Usuario</th>
+            <th scope="col">Email</th>
+            <th scope="col">Endereço</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for filial in filiais %}
+        <tr>
+            <td>
+                {{ filial.usuario.username }}
+            </td>
+            <td>
+                {{ filial.usuario.email }}
+            </td>
+            <td>
+                {{ filial.endereco }}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan=4>
+                <h4>Nenhum resultado encontrado.</h4>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% if filiais.has_other_pages %}
+
+<ul class="pagination float-right">
+    <li class="page-item">
+        <span class="page-link">{{ filiais.number }}/{{ filiais.paginator.num_pages }}</span>
+    </li>
+
+    {% if filiais.has_previous %}
+    <li class="page-item"><a class="page-link" href="?page={{ filiais.previous_page_number }}">Anterior</a>
+    </li>
+    {% else %}
+    <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+    {% endif %}
+
+    {% if filiais.has_next %}
+    <li class="page-item"><a class="page-link" href="?page={{ filiais.next_page_number }}">Proxima</a>
+    </li>
+    {% else %}
+    <li class="page-item disabled"><span class="page-link">Proxima</span></li>
+    {% endif %}
+
+</ul>
+{% endif %}
+
+{% else %}
+<h3>Você não possui permissão para concluir esta ação.</h3>
+<hr>
+<a href="{% url 'estoque:avisos' %}" class="btn btn-block btn-primary">Retornar</a>
+
+{% endif %}
+
+{% endblock %}

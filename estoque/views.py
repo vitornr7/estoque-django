@@ -12,7 +12,7 @@ import csv
 
 from .models import Estoque, Empresa, Produto, PedidosFilial
 from .utilidades import paginar, filtrar_valor
-from .forms import ProdutoForm, EstoqueForm, EstoqueAtualizarForm, ComprasCentralForm, VendasFilialForm, PedidosFilialForm
+from .forms import ProdutoForm, EstoqueForm, EstoqueAtualizarForm, ComprasCentralForm, VendasFilialForm, PedidosFilialForm, UsuarioForm, FilialForm
 
 
 @login_required
@@ -313,3 +313,44 @@ def reprovar_pedido(request, pk):
         return render(request, 'estoque/aprovar_pedido.html', {'pedido': pedido, 'aprovar': False})
 
     return render(request, 'estoque/aprovar_pedido.html')
+
+
+@login_required
+def cadastar_filial(request):
+    if request.user.is_superuser:
+        registrado = False
+
+        if request.method == "POST":
+            usuario_form = UsuarioForm(data=request.POST)
+            filial_form = FilialForm(data=request.POST)
+
+            if usuario_form.is_valid() and filial_form.is_valid():
+                usuario = usuario_form.save()
+                usuario.set_password(usuario.password)
+                usuario.save()
+
+                filial = filial_form.save(commit=False)
+                filial.usuario = usuario
+
+                filial.save()
+
+                registrado = True
+        else:
+            usuario_form = UsuarioForm()
+            filial_form = FilialForm()
+
+        return render(request, 'estoque/cadastrar_filial.html', {'usuario_form': usuario_form, 'filial_form': filial_form, 'registrado': registrado})
+    return render(request, 'estoque/cadastrar_filial.html')
+
+
+@login_required
+def listar_filiais(request):
+    if request.user.is_superuser:
+        filiais = Empresa.objects.exclude(usuario__is_superuser=True)
+
+        page = request.GET.get('page', 1)
+
+        filiais = paginar(filiais, page, 3)
+
+        return render(request, 'estoque/listar_filiais.html', {'filiais': filiais})
+    return render(request, 'estoque/listar_filiais.html')

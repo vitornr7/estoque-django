@@ -19,6 +19,8 @@ urlpatterns = [
     path('acrescentar_estoque_central/<int:pk>', views.acrescentar_estoque_central, name='acrescentar_estoque_central'),
     path('aprovar_pedido/<int:pk>', views.aprovar_pedido, name='aprovar_pedido'),
     path('reprovar_pedido/<int:pk>', views.reprovar_pedido, name='reprovar_pedido'),
+    path('cadastar_filial/', views.cadastar_filial, name='cadastar_filial'),
+    path('listar_filiais/', views.listar_filiais, name='listar_filiais'),
 
     path('filial_vender/<int:pk>', views.filial_vender, name='filial_vender'),
     path('filial_pedido/<int:pk>', views.filial_pedido, name='filial_pedido'),
@@ -26,12 +28,9 @@ urlpatterns = [
 
     # path('acrescentar_estoque/<int:pk>', views.acrescentar_estoque, name='acrescentar_estoque'),
 
-
     # path('relatorio_venda/', views.relatorio_venda, name='relatorio_venda'),
     # path('relatorio_acrescimo/', views.relatorio_acrescimo, name='relatorio_acrescimo'),
     # path('relatorio_produto/<int:pk>', views.relatorio_produto, name='relatorio_produto'),
-
-    # path('cadastrar_filial/', views.cadastar_filial, name='cadastrar_filial'),
 
     # path('download_csv/<int:pk>', views.gerar_arquivo_csv, name='download_csv'),
 
