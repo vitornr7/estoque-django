@@ -1,0 +1,5 @@
+{% if request.GET.nome_empresa %}
+    | Empresa: {{ request.GET.nome_empresa }}
+{% else %}
+    | Empresa: Tudo
+{% endif %}

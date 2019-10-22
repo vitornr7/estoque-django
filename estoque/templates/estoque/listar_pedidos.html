@@ -57,6 +57,8 @@
     <div class="col-auto">
         <strong>
             Resultado da busca
+            {% include 'estoque/pesquisa/pesq_status_pedido.html' %}
+            {% if request.user.is_superuser %}{% include 'estoque/pesquisa/pesq_empresa.html' %}{% endif %}
             {% include 'estoque/pesquisa/pesq_produto.html' %}
             {% include 'estoque/pesquisa/pesq_preco.html' %}
             {% include 'estoque/pesquisa/pesq_data.html' %}

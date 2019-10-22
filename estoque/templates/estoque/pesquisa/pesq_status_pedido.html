@@ -1,0 +1,5 @@
+{% if request.GET.status_pedido %}
+    | Status: {{ request.GET.status_pedido|title }}
+{% else %}
+    | Status: Aberto
+{% endif %}
