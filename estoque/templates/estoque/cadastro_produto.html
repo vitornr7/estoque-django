@@ -12,6 +12,8 @@
         {% csrf_token %}
         {{ produto_form|crispy }}
         {{ estoque_form|crispy }}
+        {{ valor_compra_form|crispy }}
+
         <hr>
         <input type="submit" value="Salvar" class="btn btn-success btn-block">
     </form>

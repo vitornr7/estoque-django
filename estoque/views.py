@@ -12,7 +12,7 @@ import csv
 
 from .models import Estoque, Empresa, Produto, PedidosFilial, VendasFilial, ComprasCentral
 from .utilidades import paginar, filtrar_valor
-from .forms import ProdutoForm, EstoqueForm, EstoqueAtualizarForm, ComprasCentralForm, VendasFilialForm, PedidosFilialForm, UsuarioForm, FilialForm
+from .forms import ProdutoForm, EstoqueForm, EstoqueAtualizarForm, ComprasCentralForm, VendasFilialForm, PedidosFilialForm, UsuarioForm, FilialForm, ValorCompraCentralForm
 
 
 @login_required
@@ -86,8 +86,9 @@ def cadastrar_produto(request):
             empresa = get_object_or_404(Empresa, usuario=request.user)
             produto_form = ProdutoForm(data=request.POST)
             estoque_form = EstoqueForm(data=request.POST)
+            valor_compra_form = ValorCompraCentralForm(data=request.POST)
 
-            if produto_form.is_valid() and estoque_form.is_valid():
+            if produto_form.is_valid() and estoque_form.is_valid() and valor_compra_form:
                 produto = produto_form.save()
 
                 estoque = estoque_form.save(commit=False)
@@ -95,12 +96,19 @@ def cadastrar_produto(request):
                 estoque.produto = produto
                 estoque.save()
 
+                if estoque.quantidade > 0:
+                    valor_compra = valor_compra_form.save(commit=False)
+                    valor_compra.produto = produto
+                    valor_compra.quantidade = estoque.quantidade
+                    valor_compra.save()
+
                 return HttpResponseRedirect(reverse('estoque:detalhes_produto', kwargs={'pk': produto.pk}))
         else:
             produto_form = ProdutoForm()
             estoque_form = EstoqueForm()
+            valor_compra_form = ValorCompraCentralForm()
 
-        return render(request, 'estoque/cadastro_produto.html', {'produto_form': produto_form, 'estoque_form': estoque_form})
+        return render(request, 'estoque/cadastro_produto.html', {'produto_form': produto_form, 'estoque_form': estoque_form, 'valor_compra_form': valor_compra_form})
 
     return render(request, 'estoque/cadastro_produto.html')
 

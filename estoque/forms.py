@@ -64,3 +64,12 @@ class PedidosFilialForm(ModelForm):
     class Meta():
         model = PedidosFilial
         fields = ['quantidade']
+
+
+class ValorCompraCentralForm(ModelForm):
+    class Meta():
+        model = ComprasCentral
+        fields = ['valor']
+        labels = {
+            'valor': ('Valor da compra'),
+        }
