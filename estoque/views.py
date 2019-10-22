@@ -287,6 +287,8 @@ def listar_pedidos(request):
             if pedidos and status_pedido == PedidosFilial.APROVADO:
                 valor, qtd = get_info(pedidos)
 
+        pedidos = pedidos.order_by('-data')
+
     info = {
         'valor': valor,
         'qtd': qtd,
@@ -446,6 +448,8 @@ def listar_vendas(request):
             if vendas:
                 valor, qtd = get_info(vendas)
 
+        vendas = vendas.order_by('-data')
+
     info = {
         'valor': valor,
         'qtd': qtd,
@@ -489,6 +493,8 @@ def listar_compras_central(request):
                 compras = filtrar_valor(compras, opcao_valor, valor1, valor2)
                 if compras:
                     valor, qtd = get_info(compras)
+
+            compras = compras.order_by('-data')
 
         info = {
             'valor': valor,
