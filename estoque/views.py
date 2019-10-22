@@ -8,10 +8,9 @@ from django.db.models import Sum, F, Q
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
-import csv
 
 from .models import Estoque, Empresa, Produto, PedidosFilial, VendasFilial, ComprasCentral
-from .utilidades import paginar, filtrar_valor, converter_data, filtrar_data
+from .utilidades import paginar, filtrar_valor, converter_data, filtrar_data, get_info
 from .forms import ProdutoForm, EstoqueForm, EstoqueAtualizarForm, ComprasCentralForm, VendasFilialForm, PedidosFilialForm, UsuarioForm, FilialForm, ValorCompraCentralForm
 
 
@@ -259,7 +258,7 @@ def listar_pedidos(request):
     if valor2:
         valor2 = float(valor2)
 
-    total_ganho = quantidade_vendida = 0
+    valor = qtd = 0
     data1, data2 = converter_data(opcao_data, d1, d2)
 
     if status_pedido == 'aprovado':
@@ -281,18 +280,24 @@ def listar_pedidos(request):
 
     if nome_empresa:
         pedidos = pedidos.filter(Q(empresa__usuario__username__icontains=nome_empresa))
-        #  | Q(empresa__endereco__icontains=nome_empresa)
-
 
     if pedidos:
         pedidos = filtrar_data(pedidos, opcao_data, data1, data2)
         if pedidos:
             pedidos = filtrar_valor(pedidos, opcao_valor, valor1, valor2)
+            if pedidos and status_pedido == PedidosFilial.APROVADO:
+                valor, qtd = get_info(pedidos)
 
+    info = {
+        'valor': valor,
+        'qtd': qtd,
+        'data1': data1,
+        'data2': data2,
+    }
 
     pedidos = paginar(pedidos, page, 3)
 
-    return render(request, 'estoque/listar_pedidos.html', {'pedidos': pedidos, 'status_pedido': status_pedido})
+    return render(request, 'estoque/listar_pedidos.html', {'pedidos': pedidos, 'status_pedido': status_pedido, 'info': info})
 
 
 @login_required

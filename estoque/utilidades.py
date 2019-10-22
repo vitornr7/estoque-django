@@ -1,5 +1,6 @@
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from datetime import datetime
+from django.db.models import Sum
 
 def filtrar_valor(objs, opcao_valor, valor1, valor2):
     if opcao_valor == 'entre':
