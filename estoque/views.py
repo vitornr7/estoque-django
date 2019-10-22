@@ -452,11 +452,43 @@ def listar_vendas(request):
 def listar_compras_central(request):
     if request.user.is_superuser:
         page = request.GET.get('page', 1)
+        nome_produto = request.GET.get('nome_produto')
+        d1 = request.GET.get('d1')
+        d2 = request.GET.get('d2')
+        opcao_data = request.GET.get('opcao_data')
+        valor1 = request.GET.get('valor1')
+        valor2 = request.GET.get('valor2')
+        opcao_valor = request.GET.get('opcao_valor')
+
+        if valor1:
+            valor1 = float(valor1)
+        if valor2:
+            valor2 = float(valor2)
+
+        valor = qtd = 0
+        data1, data2 = converter_data(opcao_data, d1, d2)
 
         compras = ComprasCentral.objects.all()
 
+        if nome_produto:
+            compras = compras.filter(Q(produto__nome__icontains=nome_produto) | Q(produto__codigo__icontains=nome_produto))
+
+        if compras:
+            compras = filtrar_data(compras, opcao_data, data1, data2)
+            if compras:
+                compras = filtrar_valor(compras, opcao_valor, valor1, valor2)
+                if compras:
+                    valor, qtd = get_info(compras)
+
+        info = {
+            'valor': valor,
+            'qtd': qtd,
+            'data1': data1,
+            'data2': data2,
+        }
+
         compras = paginar(compras, page, 3)
 
-        return render(request, 'estoque/listar_compras_central.html', {'compras': compras})
+        return render(request, 'estoque/listar_compras_central.html', {'compras': compras, 'info': info})
 
     return render(request, 'estoque/listar_compras_central.html')
