@@ -66,7 +66,7 @@ def atualizar_estoque(request, pk):
     produto = get_object_or_404(Produto, pk=pk)
 
     try:
-        estoque = Estoque.objects.get(Q(empresa=usuario) & Q(produto=produto))
+        estoque = Estoque.objects.get(empresa=usuario, produto=produto)
     except Estoque.DoesNotExist:
         return HttpResponseRedirect(reverse('estoque:detalhes_produto', kwargs={'pk': produto.pk}))
 
@@ -123,7 +123,7 @@ def detalhes_produto(request, pk):
 
     produto = get_object_or_404(Produto, pk=pk)
     try:
-        estoque = Estoque.objects.get(Q(empresa=usuario) & Q(produto=produto))
+        estoque = Estoque.objects.get(empresa=usuario, produto=produto)
     except Estoque.DoesNotExist:
         estoque = None
 
@@ -159,8 +159,7 @@ def acrescentar_estoque_central(request, pk):
             usuario = get_object_or_404(Empresa, usuario=request.user)
 
             try:
-                estoque = Estoque.objects.get(
-                    Q(empresa=usuario) & Q(produto=produto))
+                estoque = Estoque.objects.get(empresa=usuario, produto=produto)
             except Estoque.DoesNotExist:
                 return HttpResponseRedirect(reverse('estoque:detalhes_produto', kwargs={'pk': produto.pk}))
 
@@ -185,7 +184,7 @@ def filial_vender(request, pk):
     empresa = get_object_or_404(Empresa, usuario=request.user)
 
     try:
-        estoque = Estoque.objects.get(Q(empresa=empresa) & Q(produto=produto))
+        estoque = Estoque.objects.get(empresa=empresa, produto=produto)
     except Estoque.DoesNotExist:
         return HttpResponseRedirect(reverse('estoque:detalhes_produto', kwargs={'pk': produto.pk}))
 
