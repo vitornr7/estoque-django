@@ -7,64 +7,36 @@
 <hr>
 
 <form class="form-group" method="GET" action="{% url 'estoque:listar_pedidos' %}">
+    {% include 'estoque/pesquisa/precos.html' %}
+    {% include 'estoque/pesquisa/datas.html' %}
+
     <div class="form-row align-items-center">
         <div class="form-group col-auto">
             <div class="form-check form-check-inline">
-                <input class="form-check-input " type="radio" name="status_pedido" id="radiovalor1" value="aberto"
+                <input class="form-check-input " type="radio" name="status_pedido" id="radiostatus1" value="aberto"
                     checked>
-                <label class="form-check-label" for="radiovalor1">Abertos</label>
+                <label class="form-check-label" for="radiostatus1">Abertos</label>
             </div>
 
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="status_pedido" id="radiovalor2" value="aprovado">
-                <label class="form-check-label" for="radiovalor2">Aprovados</label>
+                <input class="form-check-input" type="radio" name="status_pedido" id="radiostatus2" value="aprovado">
+                <label class="form-check-label" for="radiostatus2">Aprovados</label>
             </div>
 
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="status_pedido" id="radiovalor3" value="reprovado">
-                <label class="form-check-label" for="radiovalor3">Reprovados</label>
+                <input class="form-check-input" type="radio" name="status_pedido" id="radiostatus3" value="reprovado">
+                <label class="form-check-label" for="radiostatus3">Reprovados</label>
             </div>
         </div>
+        {% include 'estoque/pesquisa/produto.html' %}
+        {% if request.user.is_superuser %}
+        {% include 'estoque/pesquisa/empresa.html' %}
+        {% endif %}
         <div class="form-group col">
             <button class="btn btn-outline-primary btn-sm" type="submit">Pesquisar</button>
         </div>
     </div>
 </form>
-
-
-{% comment %}
-<form class="form-group" method="GET" action="{% url 'estoque:listar_produtos' %}">
-    {% include 'estoque/pesquisa/precos.html' %}
-
-    <div class="form-row align-items-center">
-        <div class="form-group col">
-            <input class="form-control form-control-sm" type="text" placeholder="Nome/Cod" aria-label="Search" name="q">
-        </div>
-        <div class="form-group col">
-            <button class="btn btn-outline-primary btn-sm" type="submit">Pesquisar</button>
-        </div>
-    </div>
-</form>
-
-{% if request.user.is_superuser %}
-<a href="{% url 'estoque:cadastrar_produto' %}" class="btn btn-outline-success btn-block btn-sm">Cadastar Produto</a>
-{% endif %}
-
-<hr>
-
-
-<h6>
-    Resultado da busca
-
-    {% if request.GET.q %}
-    | Nome: {{ request.GET.q }}
-    {% else %}
-    | Nome: Tudo
-    {% endif %}
-
-    {% include 'estoque/pesquisa/pesq_preco.html' %}
-</h6>
-{% endcomment %}
 
 <hr>
 
@@ -116,7 +88,7 @@
 
         {% empty %}
         <tr>
-            <td colspan=6>
+            <td colspan=7>
                 <h4>Nenhum resultado encontrado.</h4>
             </td>
         </tr>
@@ -133,7 +105,7 @@
 
     {% if pedidos.has_previous %}
     <li class="page-item"><a class="page-link"
-            href="?status_pedido={{ request.GET.status_pedido }}&page={{ pedidos.previous_page_number }}">Anterior</a>
+            href="?opcao_valor={{ request.GET.opcao_valor }}&valor1={{ request.GET.valor1 }}&valor2={{ request.GET.valor2 }}&opcao_data={{ request.GET.opcao_data }}&d1={{ request.GET.d1 }}&d2={{ request.GET.d2 }}&status_pedido={{ request.GET.status_pedido }}&nome_produto={{ request.GET.nome_produto }}&nome_empresa={{ request.GET.nome_empresa }}&page={{ pedidos.previous_page_number }}">Anterior</a>
     </li>
     {% else %}
     <li class="page-item disabled"><span class="page-link">Anterior</span></li>
@@ -141,7 +113,7 @@
 
     {% if pedidos.has_next %}
     <li class="page-item"><a class="page-link"
-            href="?status_pedido={{ request.GET.status_pedido }}&page={{ pedidos.next_page_number }}">Proxima</a>
+            href="?opcao_valor={{ request.GET.opcao_valor }}&valor1={{ request.GET.valor1 }}&valor2={{ request.GET.valor2 }}&opcao_data={{ request.GET.opcao_data }}&d1={{ request.GET.d1 }}&d2={{ request.GET.d2 }}&status_pedido={{ request.GET.status_pedido }}&nome_produto={{ request.GET.nome_produto }}&nome_empresa={{ request.GET.nome_empresa }}&page={{ pedidos.next_page_number }}">Proxima</a>
     </li>
     {% else %}
     <li class="page-item disabled"><span class="page-link">Proxima</span></li>

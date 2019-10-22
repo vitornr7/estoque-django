@@ -11,7 +11,7 @@ from django.contrib.auth import authenticate, login, logout
 import csv
 
 from .models import Estoque, Empresa, Produto, PedidosFilial, VendasFilial, ComprasCentral
-from .utilidades import paginar, filtrar_valor
+from .utilidades import paginar, filtrar_valor, converter_data, filtrar_data
 from .forms import ProdutoForm, EstoqueForm, EstoqueAtualizarForm, ComprasCentralForm, VendasFilialForm, PedidosFilialForm, UsuarioForm, FilialForm, ValorCompraCentralForm
 
 
@@ -24,6 +24,11 @@ def listar_produtos(request):
     valor1 = request.GET.get('valor1')
     valor2 = request.GET.get('valor2')
     opcao_valor = request.GET.get('opcao_valor')
+
+    if valor1:
+        valor1 = float(valor1)
+    if valor2:
+        valor2 = float(valor2)
 
     if query:
         produtos = Produto.objects.filter(Q(nome__icontains=query) | Q(
@@ -240,6 +245,22 @@ def filial_pedido(request, pk):
 def listar_pedidos(request):
     page = request.GET.get('page', 1)
     status_pedido = request.GET.get('status_pedido')
+    nome_produto = request.GET.get('nome_produto')
+    nome_empresa = request.GET.get('nome_empresa')
+    d1 = request.GET.get('d1')
+    d2 = request.GET.get('d2')
+    opcao_data = request.GET.get('opcao_data')
+    valor1 = request.GET.get('valor1')
+    valor2 = request.GET.get('valor2')
+    opcao_valor = request.GET.get('opcao_valor')
+
+    if valor1:
+        valor1 = float(valor1)
+    if valor2:
+        valor2 = float(valor2)
+
+    total_ganho = quantidade_vendida = 0
+    data1, data2 = converter_data(opcao_data, d1, d2)
 
     if status_pedido == 'aprovado':
         status_pedido = PedidosFilial.APROVADO
@@ -255,11 +276,19 @@ def listar_pedidos(request):
         pedidos = PedidosFilial.objects.filter(
             Q(status=status_pedido) & Q(empresa=usuario))
 
-    # if query:
-    #     produtos = Produto.objects.filter(Q(nome__icontains=query) | Q(
-    #         codigo__icontains=query))
-    # if produtos:
-    #     produtos = filtrar_valor(produtos, opcao_valor, valor1, valor2)
+    if nome_produto:
+        pedidos = pedidos.filter(Q(produto__nome__icontains=nome_produto) | Q(produto__codigo__icontains=nome_produto))
+
+    if nome_empresa:
+        pedidos = pedidos.filter(Q(empresa__usuario__username__icontains=nome_empresa))
+        #  | Q(empresa__endereco__icontains=nome_empresa)
+
+
+    if pedidos:
+        pedidos = filtrar_data(pedidos, opcao_data, data1, data2)
+        if pedidos:
+            pedidos = filtrar_valor(pedidos, opcao_valor, valor1, valor2)
+
 
     pedidos = paginar(pedidos, page, 3)
 
