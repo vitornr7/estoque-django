@@ -390,6 +390,16 @@ def listar_filiais(request):
         filiais = Empresa.objects.exclude(usuario__is_superuser=True)
 
         page = request.GET.get('page', 1)
+        usuario = request.GET.get('usuario')
+        email = request.GET.get('email')
+        endereco = request.GET.get('endereco')
+
+        if usuario:
+            filiais = filiais.filter(usuario__username__icontains=usuario)
+        if email:
+            filiais = filiais.filter(usuario__email__icontains=email)
+        if endereco:
+            filiais = filiais.filter(Q(endereco__icontains=endereco))
 
         filiais = paginar(filiais, page, 3)
 
