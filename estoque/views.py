@@ -3,7 +3,6 @@ from django.views.generic import ListView, DetailView, CreateView, UpdateView
 from django.http import HttpResponseRedirect, HttpResponse
 from django.urls import reverse, reverse_lazy
 from datetime import datetime
-from django.utils import formats, timezone
 from django.db.models import Sum, F, Q
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
@@ -12,6 +11,7 @@ from django.contrib.auth import authenticate, login, logout
 from .models import Estoque, Empresa, Produto, PedidosFilial, VendasFilial, ComprasCentral
 from .utilidades import paginar, filtrar_valor, converter_data, filtrar_data, get_info
 from .forms import ProdutoForm, EstoqueForm, EstoqueAtualizarForm, ComprasCentralForm, VendasFilialForm, PedidosFilialForm, UsuarioForm, FilialForm, ValorCompraCentralForm
+from .gerar_csv import arq_vendas
 
 
 @login_required
@@ -31,7 +31,7 @@ def listar_produtos(request):
 
     if query:
         produtos = Produto.objects.filter(Q(nome__icontains=query) | Q(
-            codigo__icontains=query)).order_by('nome')
+            codigo=query)).order_by('nome')
     if produtos:
         produtos = filtrar_valor(produtos, opcao_valor, valor1, valor2)
 
@@ -420,6 +420,7 @@ def listar_vendas(request):
     valor1 = request.GET.get('valor1')
     valor2 = request.GET.get('valor2')
     opcao_valor = request.GET.get('opcao_valor')
+    imprimir = request.GET.get('imprimir')
 
     if valor1:
         valor1 = float(valor1)
@@ -456,6 +457,9 @@ def listar_vendas(request):
         'data1': data1,
         'data2': data2,
     }
+
+    if imprimir:
+        return arq_vendas(vendas, info, opcao_valor, valor1, valor2, opcao_data, nome_produto, nome_empresa, request.user)
 
     vendas = paginar(vendas, page, 3)
 
