@@ -69,8 +69,10 @@ def arq_pedidos(objs, info, opcao_valor, valor1, valor2, opcao_data, nome_produt
 
     if status_pedido == PedidosFilial.APROVADO:
         writer.writerow(['Status', 'Aprovado'])
-    else:
+    elif status_pedido == PedidosFilial.REPROVADO:
         writer.writerow(['Status', 'Reprovado'])
+    else:
+        writer.writerow(['Status', 'Aberto'])
 
     escrever_produto(writer, nome_produto)
     escrever_info(writer, info)
