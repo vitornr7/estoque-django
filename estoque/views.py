@@ -11,7 +11,7 @@ from django.contrib.auth import authenticate, login, logout
 from .models import Estoque, Empresa, Produto, PedidosFilial, VendasFilial, ComprasCentral
 from .utilidades import paginar, filtrar_valor, converter_data, filtrar_data, get_info
 from .forms import ProdutoForm, EstoqueForm, EstoqueAtualizarForm, ComprasCentralForm, VendasFilialForm, PedidosFilialForm, UsuarioForm, FilialForm, ValorCompraCentralForm
-from .gerar_csv import arq_vendas
+from .gerar_csv import arq_vendas, arq_compras_central
 
 
 @login_required
@@ -275,10 +275,13 @@ def listar_pedidos(request):
             Q(status=status_pedido) & Q(empresa=usuario))
 
     if nome_produto:
-        pedidos = pedidos.filter(Q(produto__nome__icontains=nome_produto) | Q(produto__codigo__icontains=nome_produto))
+        if nome_produto.isdigit():
+            pedidos = pedidos.filter(produto__codigo=nome_produto)
+        else:
+            pedidos = pedidos.filter(produto__nome__icontains=nome_produto)
 
     if nome_empresa and request.user.is_superuser:
-        pedidos = pedidos.filter(Q(empresa__usuario__username__icontains=nome_empresa))
+        pedidos = pedidos.filter(Q(empresa__usuario__username=nome_empresa))
 
     if pedidos:
         pedidos = filtrar_data(pedidos, opcao_data, data1, data2)
@@ -437,10 +440,13 @@ def listar_vendas(request):
         vendas = VendasFilial.objects.filter(empresa=usuario)
 
     if nome_produto:
-        vendas = vendas.filter(Q(produto__nome__icontains=nome_produto) | Q(produto__codigo__icontains=nome_produto))
+        if nome_produto.isdigit():
+            vendas = vendas.filter(produto__codigo=nome_produto)
+        else:
+            vendas = vendas.filter(produto__nome__icontains=nome_produto)
 
     if nome_empresa and request.user.is_superuser:
-        vendas = vendas.filter(Q(empresa__usuario__username__icontains=nome_empresa))
+        vendas = vendas.filter(Q(empresa__usuario__username=nome_empresa))
 
     if vendas:
         vendas = filtrar_data(vendas, opcao_data, data1, data2)
@@ -477,6 +483,7 @@ def listar_compras_central(request):
         valor1 = request.GET.get('valor1')
         valor2 = request.GET.get('valor2')
         opcao_valor = request.GET.get('opcao_valor')
+        imprimir = request.GET.get('imprimir')
 
         if valor1:
             valor1 = float(valor1)
@@ -489,7 +496,10 @@ def listar_compras_central(request):
         compras = ComprasCentral.objects.all()
 
         if nome_produto:
-            compras = compras.filter(Q(produto__nome__icontains=nome_produto) | Q(produto__codigo__icontains=nome_produto))
+            if nome_produto.isdigit():
+                compras = compras.filter(produto__codigo=nome_produto)
+            else:
+                compras = compras.filter(produto__nome__icontains=nome_produto)
 
         if compras:
             compras = filtrar_data(compras, opcao_data, data1, data2)
@@ -506,6 +516,9 @@ def listar_compras_central(request):
             'data1': data1,
             'data2': data2,
         }
+
+        if imprimir:
+            return arq_compras_central(compras, info, opcao_valor, valor1, valor2, opcao_data, nome_produto)
 
         compras = paginar(compras, page, 3)
 

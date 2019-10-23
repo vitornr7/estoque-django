@@ -5,7 +5,7 @@ from django.utils import formats, timezone
 
 def arq_vendas(objs, info, opcao_valor, valor1, valor2, opcao_data, nome_produto, nome_empresa, usuario):
     response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="relatorio.csv"'
+    response['Content-Disposition'] = 'attachment; filename="relatorio_vendas.csv"'
     writer = csv.writer(response)
 
     writer.writerow(['Relatorio', 'Vendas'])
@@ -30,6 +30,29 @@ def arq_vendas(objs, info, opcao_valor, valor1, valor2, opcao_data, nome_produto
             data = formats.date_format(timezone.localtime(obj.data), "d/m/Y")
             hora = formats.date_format(timezone.localtime(obj.data), "H:i")
             writer.writerow([obj.produto.nome, obj.quantidade, obj.valor, data, hora])
+
+    return response
+
+
+def arq_compras_central(objs, info, opcao_valor, valor1, valor2, opcao_data, nome_produto):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="relatorio_compras_central.csv"'
+    writer = csv.writer(response)
+
+    writer.writerow(['Relatorio', 'Compras Central'])
+
+    escrever_produto(writer, nome_produto)
+    escrever_info(writer, info)
+    escrever_data(writer, opcao_data, info['data1'], info['data2'])
+    escrever_valor(writer, opcao_valor, valor1, valor2)
+
+    writer.writerow([])
+
+    writer.writerow(['Produto', 'Quantidade', 'Total', 'Data', 'Hora'])
+    for obj in objs:
+        data = formats.date_format(timezone.localtime(obj.data), "d/m/Y")
+        hora = formats.date_format(timezone.localtime(obj.data), "H:i")
+        writer.writerow([obj.produto.nome, obj.quantidade, obj.valor, data, hora])
 
     return response
 
