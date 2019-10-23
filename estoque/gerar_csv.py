@@ -1,4 +1,8 @@
-def arq_
+import csv
+
+def arq_vendas():
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="relatorio.csv"'
 
 
 def gerar_arquivo_csv(objs, info, opcao_valor, valor1, valor2, opcao_data, opcao):
