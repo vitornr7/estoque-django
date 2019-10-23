@@ -1,6 +1,7 @@
 import csv
 from django.http import HttpResponse
 from django.utils import formats, timezone
+from .models import PedidosFilial
 
 
 def arq_vendas(objs, info, opcao_valor, valor1, valor2, opcao_data, nome_produto, nome_empresa, usuario):
@@ -57,9 +58,46 @@ def arq_compras_central(objs, info, opcao_valor, valor1, valor2, opcao_data, nom
     return response
 
 
+def arq_pedidos(objs, info, opcao_valor, valor1, valor2, opcao_data, nome_produto, nome_empresa, usuario, status_pedido):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="relatorio_pedidos.csv"'
+    writer = csv.writer(response)
+
+    writer.writerow(['Relatorio', 'Pedidos'])
+
+    escrever_empresa(writer, nome_empresa, usuario)
+
+    if status_pedido == PedidosFilial.APROVADO:
+        writer.writerow(['Status', 'Aprovado'])
+    else:
+        writer.writerow(['Status', 'Reprovado'])
+
+    escrever_produto(writer, nome_produto)
+    escrever_info(writer, info)
+    escrever_data(writer, opcao_data, info['data1'], info['data2'])
+    escrever_valor(writer, opcao_valor, valor1, valor2)
+
+    writer.writerow([])
+
+    if usuario.is_superuser:
+        writer.writerow(['Produto', 'Quantidade', 'Total', 'Data', 'Hora', 'Empresa'])
+        for obj in objs:
+            data = formats.date_format(timezone.localtime(obj.data), "d/m/Y")
+            hora = formats.date_format(timezone.localtime(obj.data), "H:i")
+            writer.writerow([obj.produto.nome, obj.quantidade, obj.valor, data, hora, obj.empresa])
+    else:
+        writer.writerow(['Produto', 'Quantidade', 'Total', 'Data', 'Hora'])
+        for obj in objs:
+            data = formats.date_format(timezone.localtime(obj.data), "d/m/Y")
+            hora = formats.date_format(timezone.localtime(obj.data), "H:i")
+            writer.writerow([obj.produto.nome, obj.quantidade, obj.valor, data, hora])
+
+    return response
+
+
 def escrever_info(writer, info):
-    writer.writerow(['Total Ganho', info['valor']])
-    writer.writerow(['Quantidade vendida', info['qtd']])
+    writer.writerow(['Total', info['valor']])
+    writer.writerow(['Quantidade', info['qtd']])
 
 
 def escrever_produto(writer, nome_produto):

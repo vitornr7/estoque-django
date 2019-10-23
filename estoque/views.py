@@ -11,7 +11,7 @@ from django.contrib.auth import authenticate, login, logout
 from .models import Estoque, Empresa, Produto, PedidosFilial, VendasFilial, ComprasCentral
 from .utilidades import paginar, filtrar_valor, converter_data, filtrar_data, get_info
 from .forms import ProdutoForm, EstoqueForm, EstoqueAtualizarForm, ComprasCentralForm, VendasFilialForm, PedidosFilialForm, UsuarioForm, FilialForm, ValorCompraCentralForm
-from .gerar_csv import arq_vendas, arq_compras_central
+from .gerar_csv import arq_vendas, arq_compras_central, arq_pedidos
 
 
 @login_required
@@ -251,6 +251,7 @@ def listar_pedidos(request):
     valor1 = request.GET.get('valor1')
     valor2 = request.GET.get('valor2')
     opcao_valor = request.GET.get('opcao_valor')
+    imprimir = request.GET.get('imprimir')
 
     if valor1:
         valor1 = float(valor1)
@@ -287,7 +288,7 @@ def listar_pedidos(request):
         pedidos = filtrar_data(pedidos, opcao_data, data1, data2)
         if pedidos:
             pedidos = filtrar_valor(pedidos, opcao_valor, valor1, valor2)
-            if pedidos and status_pedido == PedidosFilial.APROVADO:
+            if pedidos:
                 valor, qtd = get_info(pedidos)
 
         pedidos = pedidos.order_by('-data')
@@ -298,6 +299,9 @@ def listar_pedidos(request):
         'data1': data1,
         'data2': data2,
     }
+
+    if imprimir:
+        return arq_pedidos(pedidos, info, opcao_valor, valor1, valor2, opcao_data, nome_produto, nome_empresa, request.user, status_pedido)
 
     pedidos = paginar(pedidos, page, 3)
 

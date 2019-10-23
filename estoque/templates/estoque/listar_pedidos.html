@@ -40,7 +40,6 @@
 
 <hr>
 
-{% if request.GET.status_pedido == 'aprovado' %}
 <strong>
     <div class="row">
         <div class="col-4">Total</div>
@@ -51,7 +50,6 @@
         <div class="col-8">{{ info.qtd }}</div>
     </div>
 </strong>
-{% endif %}
 
 <div class="row align-items-center">
     <div class="col-auto">
@@ -64,10 +62,11 @@
             {% include 'estoque/pesquisa/pesq_data.html' %}
         </strong>
     </div>
+    {% if status_pedido != 0 %}
     <div class="col">
-        {% include 'estoque/relatorio/rel_venda.html' %}
-        </form>
+        {% include 'estoque/relatorio/rel_pedidos.html' %}
     </div>
+    {% endif %}
 </div>
 
 <table class="table table-striped table-bordered table-sm">
