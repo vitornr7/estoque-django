@@ -137,9 +137,9 @@ def avisos(request):
 
     usuario = get_object_or_404(Empresa, usuario=request.user)
     baixo = Estoque.objects.filter(
-        Q(empresa=usuario) & Q(quantidade__lte=F('baixo_estoque')))
+        Q(empresa=usuario) & Q(quantidade__lte=F('baixo_estoque'))).order_by('quantidade')
     alto = Estoque.objects.filter(
-        Q(empresa=usuario) & Q(quantidade__gte=F('alto_estoque')))
+        Q(empresa=usuario) & Q(quantidade__gte=F('alto_estoque'))).order_by('-quantidade')
 
     baixo = paginar(baixo, page1, 3)
     alto = paginar(alto, page2, 3)
