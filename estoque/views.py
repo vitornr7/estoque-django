@@ -534,12 +534,16 @@ def listar_compras_central(request):
 @login_required
 def estatisticas(request):
     page = request.GET.get('page', 1)
-    # nome_empresa = request.GET.get('nome_empresa')
+    nome_empresa = request.GET.get('nome_empresa')
     mes = request.GET.get('mes')
     menos_vendidos = request.GET.get('menos_vendidos')
 
     if request.user.is_superuser:
-        vendas = VendasFilial.objects.all()
+        if nome_empresa:
+            vendas = VendasFilial.objects.all()
+            vendas = vendas.filter(empresa__usuario__username=nome_empresa)
+        else:
+            vendas = VendasFilial.objects.all()
     else:
         usuario = get_object_or_404(Empresa, usuario=request.user)
         vendas = VendasFilial.objects.filter(empresa=usuario)
@@ -556,15 +560,6 @@ def estatisticas(request):
         vendas = vendas.values(nome_empresa=F('empresa__usuario__username'), id_prod=F('produto'), nome_prod=F('produto__nome')).annotate(qtd_vendida=Sum('quantidade')).order_by('qtd_vendida')
     else:
         vendas = vendas.values(nome_empresa=F('empresa__usuario__username'), id_prod=F('produto'), nome_prod=F('produto__nome')).annotate(qtd_vendida=Sum('quantidade')).order_by('-qtd_vendida')
-
-    # if nome_produto:
-    #     if nome_produto.isdigit():
-    #         vendas = vendas.filter(produto__codigo=nome_produto)
-    #     else:
-    #         vendas = vendas.filter(produto__nome__icontains=nome_produto)
-
-    # if nome_empresa and request.user.is_superuser:
-    #     vendas = vendas.filter(Q(empresa__usuario__username=nome_empresa))
 
     vendas = paginar(vendas, page, 3)
 

@@ -32,10 +32,14 @@
             </div>
         </div>
 
+        {% if request.user.is_superuser %}
+        {% include 'estoque/pesquisa/empresa.html' %}
+        {% endif %}
 
         <div class="form-group col">
             <div class="form-check form-check-inline">
-                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="menos_vendidos" name="menos_vendidos">
+                <input class="form-check-input" type="checkbox" id="inlineCheckbox1" value="menos_vendidos"
+                    name="menos_vendidos">
                 <label class="form-check-label" for="inlineCheckbox1">Menos Vendidos</label>
             </div>
 
@@ -90,7 +94,7 @@
 
     {% if vendas.has_previous %}
     <li class="page-item"><a class="page-link"
-            href="?mes={{ request.GET.mes }}&menos_vendidos={{ request.GET.menos_vendidos }}&page={{ vendas.previous_page_number }}">Anterior</a>
+            href="?mes={{ request.GET.mes }}&nome_empresa={{ request.GET.nome_empresa }}&menos_vendidos={{ request.GET.menos_vendidos }}&page={{ vendas.previous_page_number }}">Anterior</a>
     </li>
     {% else %}
     <li class="page-item disabled"><span class="page-link">Anterior</span></li>
@@ -98,7 +102,7 @@
 
     {% if vendas.has_next %}
     <li class="page-item"><a class="page-link"
-            href="?mes={{ request.GET.mes }}&menos_vendidos={{ request.GET.menos_vendidos }}&page={{ vendas.next_page_number }}">Proxima</a>
+            href="?mes={{ request.GET.mes }}&nome_empresa={{ request.GET.nome_empresa }}&menos_vendidos={{ request.GET.menos_vendidos }}&page={{ vendas.next_page_number }}">Proxima</a>
     </li>
     {% else %}
     <li class="page-item disabled"><span class="page-link">Proxima</span></li>
