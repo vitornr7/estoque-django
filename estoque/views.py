@@ -529,3 +529,43 @@ def listar_compras_central(request):
         return render(request, 'estoque/listar_compras_central.html', {'compras': compras, 'info': info})
 
     return render(request, 'estoque/listar_compras_central.html')
+
+
+@login_required
+def estatisticas(request):
+    page = request.GET.get('page', 1)
+    # nome_empresa = request.GET.get('nome_empresa')
+    mes = request.GET.get('mes')
+    menos_vendidos = request.GET.get('menos_vendidos')
+
+    if request.user.is_superuser:
+        vendas = VendasFilial.objects.all()
+    else:
+        usuario = get_object_or_404(Empresa, usuario=request.user)
+        vendas = VendasFilial.objects.filter(empresa=usuario)
+
+    if mes:
+        mes = int(mes)
+    else:
+        mes = 0
+
+    if mes != 0:
+        vendas = vendas.filter(data__month=mes)
+
+    if menos_vendidos:
+        vendas = vendas.values(nome_empresa=F('empresa__usuario__username'), id_prod=F('produto'), nome_prod=F('produto__nome')).annotate(qtd_vendida=Sum('quantidade')).order_by('qtd_vendida')
+    else:
+        vendas = vendas.values(nome_empresa=F('empresa__usuario__username'), id_prod=F('produto'), nome_prod=F('produto__nome')).annotate(qtd_vendida=Sum('quantidade')).order_by('-qtd_vendida')
+
+    # if nome_produto:
+    #     if nome_produto.isdigit():
+    #         vendas = vendas.filter(produto__codigo=nome_produto)
+    #     else:
+    #         vendas = vendas.filter(produto__nome__icontains=nome_produto)
+
+    # if nome_empresa and request.user.is_superuser:
+    #     vendas = vendas.filter(Q(empresa__usuario__username=nome_empresa))
+
+    vendas = paginar(vendas, page, 3)
+
+    return render(request, 'estoque/estatisticas.html', {'vendas': vendas})
