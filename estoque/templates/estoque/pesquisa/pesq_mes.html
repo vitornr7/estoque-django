@@ -1,0 +1,27 @@
+{% if request.GET.mes == '1' %}
+    | Mês: Janeiro
+{% elif request.GET.mes == '2' %}
+    | Mês: Fevereiro
+{% elif request.GET.mes == '3' %}
+    | Mês: Março
+{% elif request.GET.mes == '4' %}
+    | Mês: Abril
+{% elif request.GET.mes == '5' %}
+    | Mês: Maio
+{% elif request.GET.mes == '6' %}
+    | Mês: Junho
+{% elif request.GET.mes == '7' %}
+    | Mês: Julho
+{% elif request.GET.mes == '8' %}
+    | Mês: Agosto
+{% elif request.GET.mes == '9' %}
+    | Mês: Setembro
+{% elif request.GET.mes == '10' %}
+    | Mês: Outubro
+{% elif request.GET.mes == '11' %}
+    | Mês: Novembro
+{% elif request.GET.mes == '12' %}
+    | Mês: Dezembro
+{% else %}
+    | Mês: Todos
+{% endif %}
