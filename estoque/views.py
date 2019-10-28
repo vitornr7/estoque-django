@@ -366,7 +366,7 @@ def reprovar_pedido(request, pk):
 
 
 @login_required
-def cadastar_filial(request):
+def cadastrar_filial(request):
     if request.user.is_superuser:
         registrado = False
 
