@@ -71,6 +71,27 @@ class VendasFilial(models.Model):
         return self.produto.nome + ' - ' + str(self.data)
 
 
+class Carrinho(models.Model):
+    ABERTO = False
+    FECHADO = True
+
+    status = models.BooleanField(default=ABERTO)
+    empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
+    valor = models.DecimalField(max_digits=10, decimal_places=2, validators=[
+                                MinValueValidator(0), MaxValueValidator(1000000)])
+
+    data = models.DateTimeField()
+
+
+class CarrinhoLista(models.Model):
+    carrinho = models.ForeignKey(Carrinho, on_delete=models.CASCADE)
+    produto = models.ForeignKey(Produto, on_delete=models.CASCADE)
+    quantidade = models.PositiveIntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(1000000)])
+    valor = models.DecimalField(max_digits=10, decimal_places=2, validators=[
+                                MinValueValidator(0), MaxValueValidator(1000000)])
+
+
 class PedidosFilial(models.Model):
     ABERTO = 0
     APROVADO = 1
@@ -84,7 +105,8 @@ class PedidosFilial(models.Model):
 
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
     produto = models.ForeignKey(Produto, on_delete=models.CASCADE)
-    status = models.PositiveSmallIntegerField(choices= STATUS_PEDIDO,validators=[MinValueValidator(0), MaxValueValidator(2)], default=ABERTO)
+    status = models.PositiveSmallIntegerField(choices=STATUS_PEDIDO, validators=[
+                                              MinValueValidator(0), MaxValueValidator(2)], default=ABERTO)
 
     quantidade = models.PositiveIntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(1000000)])
