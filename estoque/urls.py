@@ -31,8 +31,7 @@ urlpatterns = [
          name='listar_compras_central'),
 
     path('filial_vender/<int:pk>', views.filial_vender, name='filial_vender'),
-    path('filial_realizar_venda/<int:pk>',
-         views.filial_realizar_venda, name='filial_realizar_venda'),
+
     path('adicionar_ao_carrinho/<int:pk>',
          views.adicionar_ao_carrinho, name='adicionar_ao_carrinho'),
     path('filial_pedido/<int:pk>', views.filial_pedido, name='filial_pedido'),

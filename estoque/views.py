@@ -572,10 +572,6 @@ def estatisticas(request):
     return render(request, 'estoque/estatisticas.html', {'vendas': vendas})
 
 
-def filial_realizar_venda(request):
-    pass
-
-
 @login_required
 def adicionar_ao_carrinho(request, pk):
     if request.user.is_superuser:
