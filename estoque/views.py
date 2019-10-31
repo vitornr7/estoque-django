@@ -7,10 +7,12 @@ from django.db.models import Sum, F, Q
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
+from django.db import IntegrityError
+from django.contrib import messages
 
-from .models import Estoque, Empresa, Produto, PedidosFilial, VendasFilial, ComprasCentral
+from .models import Estoque, Empresa, Produto, PedidosFilial, VendasFilial, ComprasCentral, Carrinho, CarrinhoProdutos
 from .utilidades import paginar, filtrar_valor, converter_data, filtrar_data, get_info
-from .forms import ProdutoForm, EstoqueForm, EstoqueAtualizarForm, ComprasCentralForm, VendasFilialForm, PedidosFilialForm, UsuarioForm, FilialForm, ValorCompraCentralForm
+from .forms import ProdutoForm, EstoqueForm, EstoqueAtualizarForm, ComprasCentralForm, VendasFilialForm, PedidosFilialForm, UsuarioForm, FilialForm, ValorCompraCentralForm, CarrinhoProdutosForm
 from .gerar_csv import arq_vendas, arq_compras_central, arq_pedidos
 
 
@@ -321,14 +323,16 @@ def aprovar_pedido(request, pk):
             central = get_object_or_404(Empresa, usuario=request.user)
 
             try:
-                estoque_central = Estoque.objects.get(empresa=central, produto=pedido.produto)
+                estoque_central = Estoque.objects.get(
+                    empresa=central, produto=pedido.produto)
             except Estoque.DoesNotExist:
                 return HttpResponseRedirect(reverse('estoque:listar_pedidos'))
 
             if pedido.quantidade > estoque_central.quantidade:
                 return render(request, 'estoque/aprovar_pedido.html', {'pedido': pedido, 'aprovar': True, 'quantidade_maior': True, 'quantidade': estoque_central.quantidade})
 
-            estoque_filial, criado = Estoque.objects.get_or_create(empresa=filial, produto=pedido.produto)
+            estoque_filial, criado = Estoque.objects.get_or_create(
+                empresa=filial, produto=pedido.produto)
 
             estoque_central.quantidade -= pedido.quantidade
             estoque_central.save()
@@ -557,10 +561,127 @@ def estatisticas(request):
         vendas = vendas.filter(data__month=mes)
 
     if menos_vendidos:
-        vendas = vendas.values(nome_empresa=F('empresa__usuario__username'), id_prod=F('produto'), nome_prod=F('produto__nome')).annotate(qtd_vendida=Sum('quantidade')).order_by('qtd_vendida')
+        vendas = vendas.values(nome_empresa=F('empresa__usuario__username'), id_prod=F('produto'), nome_prod=F(
+            'produto__nome')).annotate(qtd_vendida=Sum('quantidade')).order_by('qtd_vendida')
     else:
-        vendas = vendas.values(nome_empresa=F('empresa__usuario__username'), id_prod=F('produto'), nome_prod=F('produto__nome')).annotate(qtd_vendida=Sum('quantidade')).order_by('-qtd_vendida')
+        vendas = vendas.values(nome_empresa=F('empresa__usuario__username'), id_prod=F('produto'), nome_prod=F(
+            'produto__nome')).annotate(qtd_vendida=Sum('quantidade')).order_by('-qtd_vendida')
 
     vendas = paginar(vendas, page, 3)
 
     return render(request, 'estoque/estatisticas.html', {'vendas': vendas})
+
+
+def filial_realizar_venda(request):
+    pass
+
+
+@login_required
+def adicionar_ao_carrinho(request, pk):
+    if request.user.is_superuser:
+        return render(request, 'estoque/adicionar_carrinho.html')
+
+    produto = get_object_or_404(Produto, pk=pk)
+    empresa = get_object_or_404(Empresa, usuario=request.user)
+
+    try:
+        estoque = Estoque.objects.get(empresa=empresa, produto=produto)
+    except Estoque.DoesNotExist:
+        return HttpResponseRedirect(reverse('estoque:detalhes_produto', kwargs={'pk': produto.pk}))
+
+    form = CarrinhoProdutosForm(estoque)
+
+    if request.method == "POST":
+        form = CarrinhoProdutosForm(estoque, data=request.POST)
+
+        if form.is_valid():
+            carrinho, criado = Carrinho.objects.get_or_create(
+                empresa=empresa, status=Carrinho.ABERTO)
+
+            try:
+                car_prod = CarrinhoProdutos.objects.get(carrinho=carrinho, produto=produto)
+                quantidade = form.cleaned_data['quantidade']
+
+                car_prod.quantidade += quantidade
+                car_prod.valor = car_prod.quantidade * produto.valor
+                car_prod.save()
+
+                msg = 'Quantidade (' + str(quantidade) + ') adicionada ao produto ' + produto.nome
+                messages.info(request, msg)
+
+                return HttpResponseRedirect(reverse('estoque:carrinho'))
+            except CarrinhoProdutos.DoesNotExist:
+                pass
+
+            data = form.save(commit=False)
+            data.carrinho = carrinho
+            data.produto = produto
+
+            data.valor = produto.valor * data.quantidade
+
+            data.save()
+
+            return HttpResponseRedirect(reverse('estoque:carrinho'))
+
+    return render(request, 'estoque/adicionar_carrinho.html', {'form': form, 'produto': produto})
+
+
+@login_required
+def carrinho(request):
+    if request.user.is_superuser:
+        return render(request, 'estoque/carrinho.html')
+
+    empresa = get_object_or_404(Empresa, usuario=request.user)
+    carrinho, criado = Carrinho.objects.get_or_create(
+        empresa=empresa, status=Carrinho.ABERTO)
+
+    car_prod = CarrinhoProdutos.objects.filter(carrinho=carrinho)
+
+    total = '%.2f' % car_prod.aggregate(Sum('valor'))['valor__sum']
+
+    return render(request, 'estoque/carrinho.html', {'car_prod': car_prod, 'total': total})
+
+
+@login_required
+def alterar_quantidade_carrinho(request, pk):
+    if request.user.is_superuser:
+        return HttpResponseRedirect(reverse('estoque:carrinho'))
+
+    produto = get_object_or_404(Produto, pk=pk)
+    empresa = get_object_or_404(Empresa, usuario=request.user)
+
+    try:
+        estoque = Estoque.objects.get(empresa=empresa, produto=produto)
+    except Estoque.DoesNotExist:
+        return HttpResponseRedirect(reverse('estoque:detalhes_produto', kwargs={'pk': produto.pk}))
+
+    carrinho = get_object_or_404(Carrinho, empresa=empresa, status=Carrinho.ABERTO)
+    car_prod = get_object_or_404(CarrinhoProdutos, carrinho=carrinho, produto=produto)
+
+    form = CarrinhoProdutosForm(estoque, instance=car_prod)
+
+    if request.method == "POST":
+        form = CarrinhoProdutosForm(estoque, data=request.POST, instance=car_prod)
+
+        if form.is_valid():
+            data = form.save(commit=False)
+            data.valor = produto.valor * data.quantidade
+            data.save()
+            return HttpResponseRedirect(reverse('estoque:carrinho'))
+
+    return render(request, 'estoque/adicionar_carrinho.html', {'form': form, 'produto': produto})
+
+
+@login_required
+def remover_do_carrinho(request, pk):
+    if request.user.is_superuser:
+        return render(request, 'estoque/carrinho.html')
+
+    empresa = get_object_or_404(Empresa, usuario=request.user)
+    carrinho, criado = Carrinho.objects.get_or_create(
+        empresa=empresa, status=Carrinho.ABERTO)
+
+    car_prod = CarrinhoProdutos.objects.filter(carrinho=carrinho, produto=pk)
+    car_prod.delete()
+
+    return HttpResponseRedirect(reverse('estoque:carrinho'))

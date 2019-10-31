@@ -47,27 +47,25 @@
                 </li>
 
                 {% if request.user.is_superuser %}
+
                 <li class="nav-item active">
-                        <a class="nav-link" href="{% url 'estoque:listar_compras_central' %}">Acrescimos<span
-                                class="sr-only">(current)</span></a>
-                    </li>
+                    <a class="nav-link" href="{% url 'estoque:listar_compras_central' %}">Acrescimos<span
+                            class="sr-only">(current)</span></a>
+                </li>
 
                 <li class="nav-item active">
                     <a class="nav-link" href="{% url 'estoque:listar_filiais' %}">Filiais<span
                             class="sr-only">(current)</span></a>
                 </li>
-                {% endif %}
 
-                {% comment %}
+                {% else %}
+
                 <li class="nav-item active">
-                    <a class="nav-link" href="{% url 'estoque:relatorio_venda' %}">Vendas<span
+                    <a class="nav-link" href="{% url 'estoque:carrinho' %}">Carrinho<span
                             class="sr-only">(current)</span></a>
                 </li>
-                <li class="nav-item active">
-                    <a class="nav-link" href="{% url 'estoque:relatorio_acrescimo' %}">Acrescimos Estoque<span
-                            class="sr-only">(current)</span></a>
-                </li>
-                {% endcomment %}
+
+                {% endif %}
             </ul>
 
             <a class="nav-link" href="#">Logado como: {{ user.username }}</a>

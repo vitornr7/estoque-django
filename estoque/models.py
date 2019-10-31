@@ -3,6 +3,7 @@ from django.urls import reverse
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.core.exceptions import ValidationError
 from django.contrib.auth.models import User
+from django.db.models import Q
 
 
 class Produto(models.Model):
@@ -78,18 +79,35 @@ class Carrinho(models.Model):
     status = models.BooleanField(default=ABERTO)
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
     valor = models.DecimalField(max_digits=10, decimal_places=2, validators=[
-                                MinValueValidator(0), MaxValueValidator(1000000)])
+                                MinValueValidator(0), MaxValueValidator(1000000)], default=0)
 
-    data = models.DateTimeField()
+    data = models.DateTimeField(null=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['empresa'], condition=Q(status=False), name='carrinho_aberto'),
+        ]
+
+    def __str__(self):
+        return str(self.id) + ' - ' + str(self.empresa) + ' - ' + str(self.status)
 
 
-class CarrinhoLista(models.Model):
+class CarrinhoProdutos(models.Model):
     carrinho = models.ForeignKey(Carrinho, on_delete=models.CASCADE)
     produto = models.ForeignKey(Produto, on_delete=models.CASCADE)
     quantidade = models.PositiveIntegerField(
         validators=[MinValueValidator(1), MaxValueValidator(1000000)])
     valor = models.DecimalField(max_digits=10, decimal_places=2, validators=[
                                 MinValueValidator(0), MaxValueValidator(1000000)])
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['carrinho', 'produto'], name='carrinho_produto'),
+        ]
+
+    def __str__(self):
+        return str(self.carrinho) + ' - ' + str(self.produto)
 
 
 class PedidosFilial(models.Model):

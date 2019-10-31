@@ -44,6 +44,7 @@
                 <th scope="col">Cod</th>
                 <th scope="col">Nome</th>
                 <th scope="col">Valor</th>
+                {% if not request.user.is_superuser %}<th scope="col">Opções</th>{% endif %}
             </tr>
         </thead>
         <tbody>
@@ -58,6 +59,11 @@
                 <td>
                     {{ prod.valor }}
                 </td>
+                {% if not request.user.is_superuser %}
+                <td>
+                    <a href="{% url 'estoque:adicionar_ao_carrinho' prod.id %}">+carrinho</a>
+                </td>
+                {% endif %}
             </tr>
             {% empty %}
             <tr>
