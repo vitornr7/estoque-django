@@ -1,0 +1,123 @@
+{% extends 'estoque/base.html' %}
+
+{% block corpo %}
+
+<h1>Vendas</h1>
+
+<hr>
+{% comment %}
+
+<form class="form-group" method="GET" action="{% url 'estoque:listar_vendas' %}">
+    {% include 'estoque/pesquisa/precos.html' %}
+    {% include 'estoque/pesquisa/datas.html' %}
+    <div class="form-row align-items-center">
+        {% include 'estoque/pesquisa/produto.html' %}
+        {% if request.user.is_superuser %}
+        {% include 'estoque/pesquisa/empresa.html' %}
+        {% endif %}
+        <div class="form-group col">
+            <button class="btn btn-outline-primary btn-sm" type="submit">Pesquisar</button>
+        </div>
+    </div>
+</form>
+
+<hr>
+
+<strong>
+    <div class="row">
+        <div class="col-4">Total</div>
+        <div class="col-8">{{ info.valor }}</div>
+    </div>
+    <div class="row">
+        <div class="col-4">Quantidade</div>
+        <div class="col-8">{{ info.qtd }}</div>
+    </div>
+</strong>
+
+<div class="row align-items-center">
+    <div class="col-auto">
+        <strong>
+            Resultado da busca
+            {% if request.user.is_superuser %}{% include 'estoque/pesquisa/pesq_empresa.html' %}{% endif %}
+            {% include 'estoque/pesquisa/pesq_produto.html' %}
+            {% include 'estoque/pesquisa/pesq_preco.html' %}
+            {% include 'estoque/pesquisa/pesq_data.html' %}
+        </strong>
+    </div>
+    <div class="col">
+        {% include 'estoque/relatorio/rel_venda.html' %}
+    </div>
+</div>
+
+{% endcomment %}
+
+<div class="table-responsive">
+    <table class="table table-striped table-bordered table-sm">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Carrinho</th>
+                {% if request.user.is_superuser %}<th scope="col">Empresa</th>{% endif %}
+                <th scope="col">Valor</th>
+                <th scope="col">Data</th>
+                <th scope="col">Opções</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for carrinho in carrinhos %}
+            <tr>
+                <td>
+                    {{ carrinho.id }}
+                </td>
+                {% if request.user.is_superuser %}
+                <td>
+                    {{ carrinho.empresa }}
+                </td>
+                {% endif %}
+                <td>
+                    {{ carrinho.valor }}
+                </td>
+                <td>
+                    {{ carrinho.data }}
+                </td>
+                <td>
+                    <a href="{% url 'estoque:detalhes_carrinho' carrinho.id %}">detalhes</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan=5>
+                    <h4>Nenhum resultado encontrado.</h4>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% if carrinhos.has_other_pages %}
+
+<ul class="pagination float-right">
+    <li class="page-item">
+        <span class="page-link">{{ carrinhos.number }}/{{ carrinhos.paginator.num_pages }}</span>
+    </li>
+
+    {% if carrinhos.has_previous %}
+    <li class="page-item"><a class="page-link"
+            href="?page={{ carrinhos.previous_page_number }}">Anterior</a>
+    </li>
+    {% else %}
+    <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+    {% endif %}
+
+    {% if carrinhos.has_next %}
+    <li class="page-item"><a class="page-link"
+            href="?page={{ carrinhos.next_page_number }}">Proxima</a>
+    </li>
+    {% else %}
+    <li class="page-item disabled"><span class="page-link">Proxima</span></li>
+    {% endif %}
+</ul>
+
+{% endif %}
+
+{% endblock %}

@@ -708,7 +708,16 @@ def finalizar_carrinho(request):
         carrinho.valor = total
         carrinho.data = datetime.now()
         carrinho.status = Carrinho.FECHADO
+
+        for produto in car_prod:
+            estoque = get_object_or_404(
+                Estoque, empresa=empresa, produto=produto.produto)
+
+            estoque.quantidade -= produto.quantidade
+            estoque.save()
+
         carrinho.save()
+
 
     return HttpResponseRedirect(reverse('estoque:detalhes_carrinho', kwargs={'pk': carrinho.pk}))
 
@@ -728,3 +737,25 @@ def detalhes_carrinho(request, pk):
     car_prod = CarrinhoProdutos.objects.filter(carrinho=carrinho)
 
     return render(request, 'estoque/detalhes_carrinho_finalizado.html', {'carrinho': carrinho, 'car_prod': car_prod})
+
+
+@login_required
+def listar_carrinhos(request):
+    page = request.GET.get('page', 1)
+
+    empresa = get_object_or_404(Empresa, usuario=request.user)
+
+    if request.user.is_superuser:
+        carrinhos = Carrinho.objects.filter(
+            status=Carrinho.FECHADO).order_by('-data')
+    else:
+        carrinhos = Carrinho.objects.filter(
+            empresa=empresa, status=Carrinho.FECHADO).order_by('-data')
+
+    # car_prod = CarrinhoProdutos.objects.filter(carrinho=carrinho)
+
+    # return render(request, 'estoque/detalhes_carrinho_finalizado.html', {'carrinho': carrinho, 'car_prod': car_prod})
+
+    carrinhos = paginar(carrinhos, page, 3)
+
+    return render(request, 'estoque/listar_carrinhos.html', {'carrinhos': carrinhos})
