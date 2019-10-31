@@ -636,8 +636,9 @@ def carrinho(request):
         empresa=empresa, status=Carrinho.ABERTO)
 
     car_prod = CarrinhoProdutos.objects.filter(carrinho=carrinho)
-
-    total = '%.2f' % car_prod.aggregate(Sum('valor'))['valor__sum']
+    total = 0
+    if car_prod:
+     total = '%.2f' % car_prod.aggregate(Sum('valor'))['valor__sum']
 
     return render(request, 'estoque/carrinho.html', {'car_prod': car_prod, 'total': total})
 
