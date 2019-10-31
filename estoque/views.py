@@ -710,4 +710,21 @@ def finalizar_carrinho(request):
         carrinho.status = Carrinho.FECHADO
         carrinho.save()
 
-    return HttpResponseRedirect(reverse('estoque:carrinho'))
+    return HttpResponseRedirect(reverse('estoque:detalhes_carrinho', kwargs={'pk': carrinho.pk}))
+
+
+@login_required
+def detalhes_carrinho(request, pk):
+    empresa = get_object_or_404(Empresa, usuario=request.user)
+
+    if request.user.is_superuser:
+        carrinho = get_object_or_404(Carrinho, pk=pk)
+    else:
+        carrinho = get_object_or_404(Carrinho, pk=pk, empresa=empresa)
+
+    if carrinho.status == Carrinho.ABERTO:
+        return HttpResponseRedirect(reverse('estoque:carrinho'))
+
+    car_prod = CarrinhoProdutos.objects.filter(carrinho=carrinho)
+
+    return render(request, 'estoque/detalhes_carrinho_finalizado.html', {'carrinho': carrinho, 'car_prod': car_prod})
