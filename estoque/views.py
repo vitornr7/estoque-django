@@ -9,6 +9,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
 from django.contrib import messages
+from datetime import datetime
 
 from .models import Estoque, Empresa, Produto, PedidosFilial, VendasFilial, ComprasCentral, Carrinho, CarrinhoProdutos
 from .utilidades import paginar, filtrar_valor, converter_data, filtrar_data, get_info
@@ -575,7 +576,7 @@ def estatisticas(request):
 @login_required
 def adicionar_ao_carrinho(request, pk):
     if request.user.is_superuser:
-        return render(request, 'estoque/adicionar_carrinho.html')
+        return HttpResponseRedirect(reverse('estoque:carrinho'))
 
     produto = get_object_or_404(Produto, pk=pk)
     empresa = get_object_or_404(Empresa, usuario=request.user)
@@ -595,14 +596,16 @@ def adicionar_ao_carrinho(request, pk):
                 empresa=empresa, status=Carrinho.ABERTO)
 
             try:
-                car_prod = CarrinhoProdutos.objects.get(carrinho=carrinho, produto=produto)
+                car_prod = CarrinhoProdutos.objects.get(
+                    carrinho=carrinho, produto=produto)
                 quantidade = form.cleaned_data['quantidade']
 
                 car_prod.quantidade += quantidade
                 car_prod.valor = car_prod.quantidade * produto.valor
                 car_prod.save()
 
-                msg = 'Quantidade (' + str(quantidade) + ') adicionada ao produto ' + produto.nome
+                msg = 'Quantidade (' + str(quantidade) + \
+                    ') adicionada ao produto ' + produto.nome
                 messages.info(request, msg)
 
                 return HttpResponseRedirect(reverse('estoque:carrinho'))
@@ -634,7 +637,7 @@ def carrinho(request):
     car_prod = CarrinhoProdutos.objects.filter(carrinho=carrinho)
     total = 0
     if car_prod:
-     total = '%.2f' % car_prod.aggregate(Sum('valor'))['valor__sum']
+        total = '%.2f' % car_prod.aggregate(Sum('valor'))['valor__sum']
 
     return render(request, 'estoque/carrinho.html', {'car_prod': car_prod, 'total': total})
 
@@ -652,13 +655,16 @@ def alterar_quantidade_carrinho(request, pk):
     except Estoque.DoesNotExist:
         return HttpResponseRedirect(reverse('estoque:detalhes_produto', kwargs={'pk': produto.pk}))
 
-    carrinho = get_object_or_404(Carrinho, empresa=empresa, status=Carrinho.ABERTO)
-    car_prod = get_object_or_404(CarrinhoProdutos, carrinho=carrinho, produto=produto)
+    carrinho = get_object_or_404(
+        Carrinho, empresa=empresa, status=Carrinho.ABERTO)
+    car_prod = get_object_or_404(
+        CarrinhoProdutos, carrinho=carrinho, produto=produto)
 
     form = CarrinhoProdutosForm(estoque, instance=car_prod)
 
     if request.method == "POST":
-        form = CarrinhoProdutosForm(estoque, data=request.POST, instance=car_prod)
+        form = CarrinhoProdutosForm(
+            estoque, data=request.POST, instance=car_prod)
 
         if form.is_valid():
             data = form.save(commit=False)
@@ -672,7 +678,7 @@ def alterar_quantidade_carrinho(request, pk):
 @login_required
 def remover_do_carrinho(request, pk):
     if request.user.is_superuser:
-        return render(request, 'estoque/carrinho.html')
+        return HttpResponseRedirect(reverse('estoque:carrinho'))
 
     empresa = get_object_or_404(Empresa, usuario=request.user)
     carrinho, criado = Carrinho.objects.get_or_create(
@@ -680,5 +686,28 @@ def remover_do_carrinho(request, pk):
 
     car_prod = CarrinhoProdutos.objects.filter(carrinho=carrinho, produto=pk)
     car_prod.delete()
+
+    return HttpResponseRedirect(reverse('estoque:carrinho'))
+
+
+@login_required
+def finalizar_carrinho(request):
+    if request.user.is_superuser:
+        return HttpResponseRedirect(reverse('estoque:carrinho'))
+
+    empresa = get_object_or_404(Empresa, usuario=request.user)
+    carrinho = get_object_or_404(
+        Carrinho, empresa=empresa, status=Carrinho.ABERTO)
+
+    car_prod = CarrinhoProdutos.objects.filter(carrinho=carrinho)
+    total = 0
+
+    if car_prod:
+        total = '%.2f' % car_prod.aggregate(Sum('valor'))['valor__sum']
+
+        carrinho.valor = total
+        carrinho.data = datetime.now()
+        carrinho.status = Carrinho.FECHADO
+        carrinho.save()
 
     return HttpResponseRedirect(reverse('estoque:carrinho'))
