@@ -715,90 +715,30 @@ def estatisticas(request):
     mes = request.GET.get('mes')
     menos_vendidos = request.GET.get('menos_vendidos')
 
+    if mes:
+        mes = int(mes)
+    else:
+        mes = 0
+
     empresa = get_object_or_404(Empresa, usuario=request.user)
 
-    # if request.user.is_superuser:
-    #     if nome_empresa:
-    #         carrinhos = Carrinho.objects.filter(
-    #             empresa__usuario__username=nome_empresa, status=Carrinho.FECHADO).order_by('-data')
-    #     else:
-    #         carrinhos = Carrinho.objects.filter(
-    #             status=Carrinho.FECHADO).order_by('-data')
-    # else:
-    #     carrinhos = Carrinho.objects.filter(
-    #         empresa=empresa, status=Carrinho.FECHADO).order_by('-data')
+    if request.user.is_superuser:
+        produtos = CarrinhoProdutos.objects.filter(carrinho__status=Carrinho.FECHADO)
+    else:
+        produtos = CarrinhoProdutos.objects.filter(carrinho__empresa=empresa, carrinho__status=Carrinho.FECHADO)
 
-    produtos = CarrinhoProdutos.objects.filter()
-    # nome_empresa=F('empresa__usuario__username')
-    # teste = produtos.values(prod=F('produto')).aggregate(qtd_vendida=Sum('quantidade')).order_by('-qtd_vendida')
-    teste = produtos.values('produto__pk').annotate(qtd=Sum('quantidade'), nomeprod=F('produto__nome')).order_by('-qtd')
+    if mes != 0:
+        produtos = produtos.filter(carrinho__data__month=mes)
 
-    # if mes:
-    #     mes = int(mes)
-    # else:
-    #     mes = 0
-
-    # if mes != 0:
-    #     carrinhos = carrinhos.filter(data__month=mes)
-
-    # if carrinhos:
-    #     produtos = CarrinhoProdutos.objects.filter(carrinho=carrinhos)
-    # else:
-    #     produtos = CarrinhoProdutos.objects.all()
+    if nome_empresa and request.user.is_superuser:
+        produtos = produtos.filter(carrinho__empresa__usuario__username=nome_empresa)
 
 
-    # print('---------------------------------------------------------------------------------')
-    # print('---------------------------------------------------------------------------------')
-    # # print('chegou')
-    # # print(produtos)
-    # print('---------------------------------------------------------------------------------')
-    # print('---------------------------------------------------------------------------------')
+    if menos_vendidos:
+        info = produtos.values('produto').annotate(qtd=Sum('quantidade'), nomeprod=F('produto__nome')).order_by('qtd')
+    else:
+        info = produtos.values('produto').annotate(qtd=Sum('quantidade'), nomeprod=F('produto__nome')).order_by('-qtd')
 
+    info = paginar(info, page, 3)
 
-    # if menos_vendidos:
-    #     produtos = produtos.values(nome_empresa=F('empresa__usuario__username'), id_prod=F('produto'), nome_prod=F(
-    #         'produto__nome')).annotate(qtd_vendida=Sum('quantidade')).order_by('qtd_vendida')
-    # else:
-    #     produtos = produtos.values(nome_empresa=F('empresa__usuario__username'), id_prod=F('produto'), nome_prod=F(
-    #         'produto__nome')).annotate(qtd_vendida=Sum('quantidade')).order_by('-qtd_vendida')
-
-    # produtos = paginar(produtos, page, 3)
-
-    return render(request, 'estoque/estatisticas.html', {'produtos': produtos, 'teste': teste})
-
-
-# @login_required
-# def estatisticas(request):
-#     page = request.GET.get('page', 1)
-#     nome_empresa = request.GET.get('nome_empresa')
-#     mes = request.GET.get('mes')
-#     menos_vendidos = request.GET.get('menos_vendidos')
-
-#     if request.user.is_superuser:
-#         if nome_empresa:
-#             vendas = VendasFilial.objects.all()
-#             vendas = vendas.filter(empresa__usuario__username=nome_empresa)
-#         else:
-#             vendas = VendasFilial.objects.all()
-#     else:
-#         usuario = get_object_or_404(Empresa, usuario=request.user)
-#         vendas = VendasFilial.objects.filter(empresa=usuario)
-
-#     if mes:
-#         mes = int(mes)
-#     else:
-#         mes = 0
-
-#     if mes != 0:
-#         vendas = vendas.filter(data__month=mes)
-
-#     if menos_vendidos:
-#         vendas = vendas.values(nome_empresa=F('empresa__usuario__username'), id_prod=F('produto'), nome_prod=F(
-#             'produto__nome')).annotate(qtd_vendida=Sum('quantidade')).order_by('qtd_vendida')
-#     else:
-#         vendas = vendas.values(nome_empresa=F('empresa__usuario__username'), id_prod=F('produto'), nome_prod=F(
-#             'produto__nome')).annotate(qtd_vendida=Sum('quantidade')).order_by('-qtd_vendida')
-
-#     vendas = paginar(vendas, page, 3)
-
-#     return render(request, 'estoque/estatisticas.html', {'vendas': vendas})
+    return render(request, 'estoque/estatisticas.html', {'info': info})
