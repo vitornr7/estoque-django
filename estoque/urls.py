@@ -25,7 +25,6 @@ urlpatterns = [
     path('reprovar_pedido/<int:pk>', views.reprovar_pedido, name='reprovar_pedido'),
     path('cadastrar_filial/', views.cadastrar_filial, name='cadastrar_filial'),
     path('listar_filiais/', views.listar_filiais, name='listar_filiais'),
-    path('listar_vendas/', views.listar_vendas, name='listar_vendas'),
 
     path('listar_compras_central/', views.listar_compras_central,
          name='listar_compras_central'),
