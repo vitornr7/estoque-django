@@ -422,66 +422,6 @@ def listar_filiais(request):
 
 
 @login_required
-def listar_vendas(request):
-    page = request.GET.get('page', 1)
-    nome_produto = request.GET.get('nome_produto')
-    nome_empresa = request.GET.get('nome_empresa')
-    d1 = request.GET.get('d1')
-    d2 = request.GET.get('d2')
-    opcao_data = request.GET.get('opcao_data')
-    valor1 = request.GET.get('valor1')
-    valor2 = request.GET.get('valor2')
-    opcao_valor = request.GET.get('opcao_valor')
-    imprimir = request.GET.get('imprimir')
-
-    if valor1:
-        valor1 = float(valor1)
-    if valor2:
-        valor2 = float(valor2)
-
-    valor = qtd = 0
-    data1, data2 = converter_data(opcao_data, d1, d2)
-
-    if request.user.is_superuser:
-        vendas = VendasFilial.objects.all()
-    else:
-        usuario = get_object_or_404(Empresa, usuario=request.user)
-        vendas = VendasFilial.objects.filter(empresa=usuario)
-
-    if nome_produto:
-        if nome_produto.isdigit():
-            vendas = vendas.filter(produto__codigo=nome_produto)
-        else:
-            vendas = vendas.filter(produto__nome__icontains=nome_produto)
-
-    if nome_empresa and request.user.is_superuser:
-        vendas = vendas.filter(Q(empresa__usuario__username=nome_empresa))
-
-    if vendas:
-        vendas = filtrar_data(vendas, opcao_data, data1, data2)
-        if vendas:
-            vendas = filtrar_valor(vendas, opcao_valor, valor1, valor2)
-            if vendas:
-                valor, qtd = get_info(vendas)
-
-        vendas = vendas.order_by('-data')
-
-    info = {
-        'valor': valor,
-        'qtd': qtd,
-        'data1': data1,
-        'data2': data2,
-    }
-
-    if imprimir:
-        return arq_vendas(vendas, info, opcao_valor, valor1, valor2, opcao_data, nome_produto, nome_empresa, request.user)
-
-    vendas = paginar(vendas, page, 3)
-
-    return render(request, 'estoque/listar_vendas.html', {'vendas': vendas, 'info': info})
-
-
-@login_required
 def listar_compras_central(request):
     if request.user.is_superuser:
         page = request.GET.get('page', 1)
@@ -704,7 +644,9 @@ def finalizar_carrinho(request):
 
     if car_prod:
         total = '%.2f' % car_prod.aggregate(Sum('valor'))['valor__sum']
+        qtd = car_prod.aggregate(Sum('quantidade'))['quantidade__sum']
 
+        carrinho.quantidade = qtd
         carrinho.valor = total
         carrinho.data = datetime.now()
         carrinho.status = Carrinho.FECHADO
@@ -742,6 +684,23 @@ def detalhes_carrinho(request, pk):
 @login_required
 def listar_carrinhos(request):
     page = request.GET.get('page', 1)
+    n_carrinho = request.GET.get('n_carrinho')
+    nome_empresa = request.GET.get('nome_empresa')
+    d1 = request.GET.get('d1')
+    d2 = request.GET.get('d2')
+    opcao_data = request.GET.get('opcao_data')
+    valor1 = request.GET.get('valor1')
+    valor2 = request.GET.get('valor2')
+    opcao_valor = request.GET.get('opcao_valor')
+    imprimir = request.GET.get('imprimir')
+
+    if valor1:
+        valor1 = float(valor1)
+    if valor2:
+        valor2 = float(valor2)
+
+    valor = qtd = 0
+    data1, data2 = converter_data(opcao_data, d1, d2)
 
     empresa = get_object_or_404(Empresa, usuario=request.user)
 
@@ -752,10 +711,92 @@ def listar_carrinhos(request):
         carrinhos = Carrinho.objects.filter(
             empresa=empresa, status=Carrinho.FECHADO).order_by('-data')
 
-    # car_prod = CarrinhoProdutos.objects.filter(carrinho=carrinho)
+    if n_carrinho:
+        carrinhos = carrinhos.filter(pk=n_carrinho)
 
-    # return render(request, 'estoque/detalhes_carrinho_finalizado.html', {'carrinho': carrinho, 'car_prod': car_prod})
+    if nome_empresa and request.user.is_superuser:
+        carrinhos = carrinhos.filter(Q(empresa__usuario__username=nome_empresa))
+
+    if carrinhos:
+        carrinhos = filtrar_data(carrinhos, opcao_data, data1, data2)
+        if carrinhos:
+            carrinhos = filtrar_valor(carrinhos, opcao_valor, valor1, valor2)
+            if carrinhos:
+                valor, qtd = get_info(carrinhos)
+
+        carrinhos = carrinhos.order_by('-data')
+
+    info = {
+        'valor': valor,
+        'qtd': qtd,
+        'data1': data1,
+        'data2': data2,
+    }
+
+    # if imprimir:
+    #     return arq_vendas(vendas, info, opcao_valor, valor1, valor2, opcao_data, nome_produto, nome_empresa, request.user)
 
     carrinhos = paginar(carrinhos, page, 3)
 
-    return render(request, 'estoque/listar_carrinhos.html', {'carrinhos': carrinhos})
+    return render(request, 'estoque/listar_carrinhos.html', {'carrinhos': carrinhos, 'info': info})
+
+
+@login_required
+def listar_vendas(request):
+    # page = request.GET.get('page', 1)
+    # nome_produto = request.GET.get('nome_produto')
+    # nome_empresa = request.GET.get('nome_empresa')
+    # d1 = request.GET.get('d1')
+    # d2 = request.GET.get('d2')
+    # opcao_data = request.GET.get('opcao_data')
+    # valor1 = request.GET.get('valor1')
+    # valor2 = request.GET.get('valor2')
+    # opcao_valor = request.GET.get('opcao_valor')
+    # imprimir = request.GET.get('imprimir')
+
+    # if valor1:
+    #     valor1 = float(valor1)
+    # if valor2:
+    #     valor2 = float(valor2)
+
+    # valor = qtd = 0
+    # data1, data2 = converter_data(opcao_data, d1, d2)
+
+    # if request.user.is_superuser:
+    #     vendas = VendasFilial.objects.all()
+    # else:
+    #     usuario = get_object_or_404(Empresa, usuario=request.user)
+    #     vendas = VendasFilial.objects.filter(empresa=usuario)
+
+    # if nome_produto:
+    #     if nome_produto.isdigit():
+    #         vendas = vendas.filter(produto__codigo=nome_produto)
+    #     else:
+    #         vendas = vendas.filter(produto__nome__icontains=nome_produto)
+
+    # if nome_empresa and request.user.is_superuser:
+    #     vendas = vendas.filter(Q(empresa__usuario__username=nome_empresa))
+
+    # if vendas:
+    #     vendas = filtrar_data(vendas, opcao_data, data1, data2)
+    #     if vendas:
+    #         vendas = filtrar_valor(vendas, opcao_valor, valor1, valor2)
+    #         if vendas:
+    #             valor, qtd = get_info(vendas)
+
+    #     vendas = vendas.order_by('-data')
+
+    # info = {
+    #     'valor': valor,
+    #     'qtd': qtd,
+    #     'data1': data1,
+    #     'data2': data2,
+    # }
+
+    # if imprimir:
+    #     return arq_vendas(vendas, info, opcao_valor, valor1, valor2, opcao_data, nome_produto, nome_empresa, request.user)
+
+    # vendas = paginar(vendas, page, 3)
+
+    # return render(request, 'estoque/listar_vendas.html', {'vendas': vendas, 'info': info})
+    return HttpResponse('nada aqui')

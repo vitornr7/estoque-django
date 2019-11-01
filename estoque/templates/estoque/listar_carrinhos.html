@@ -5,13 +5,16 @@
 <h1>Vendas</h1>
 
 <hr>
-{% comment %}
 
-<form class="form-group" method="GET" action="{% url 'estoque:listar_vendas' %}">
+
+<form class="form-group" method="GET" action="{% url 'estoque:listar_carrinhos' %}">
     {% include 'estoque/pesquisa/precos.html' %}
     {% include 'estoque/pesquisa/datas.html' %}
     <div class="form-row align-items-center">
-        {% include 'estoque/pesquisa/produto.html' %}
+        <div class="form-group col-auto">
+            <input class="form-control form-control-sm" type="number" min="0" placeholder="Nº carrinho" aria-label="Search"
+                name="n_carrinho">
+        </div>
         {% if request.user.is_superuser %}
         {% include 'estoque/pesquisa/empresa.html' %}
         {% endif %}
@@ -21,6 +24,7 @@
     </div>
 </form>
 
+{% comment %}
 <hr>
 
 <strong>
@@ -102,16 +106,14 @@
     </li>
 
     {% if carrinhos.has_previous %}
-    <li class="page-item"><a class="page-link"
-            href="?page={{ carrinhos.previous_page_number }}">Anterior</a>
+    <li class="page-item"><a class="page-link" href="?page={{ carrinhos.previous_page_number }}">Anterior</a>
     </li>
     {% else %}
     <li class="page-item disabled"><span class="page-link">Anterior</span></li>
     {% endif %}
 
     {% if carrinhos.has_next %}
-    <li class="page-item"><a class="page-link"
-            href="?page={{ carrinhos.next_page_number }}">Proxima</a>
+    <li class="page-item"><a class="page-link" href="?page={{ carrinhos.next_page_number }}">Proxima</a>
     </li>
     {% else %}
     <li class="page-item disabled"><span class="page-link">Proxima</span></li>

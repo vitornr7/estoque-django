@@ -78,6 +78,8 @@ class Carrinho(models.Model):
 
     status = models.BooleanField(default=ABERTO)
     empresa = models.ForeignKey(Empresa, on_delete=models.CASCADE)
+    quantidade = models.PositiveIntegerField(
+        validators=[MinValueValidator(1), MaxValueValidator(1000000)])
     valor = models.DecimalField(max_digits=10, decimal_places=2, validators=[
                                 MinValueValidator(0), MaxValueValidator(1000000)], default=0)
 
