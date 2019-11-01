@@ -75,15 +75,17 @@ def arq_carrinho_produtos(objs, produtos, info, opcao_valor, valor1, valor2, opc
 
             writer.writerow([])
     else:
+        writer.writerow(['Carrinho', 'Quantidade Total', 'Valor Total', 'Data', 'Hora'])
+        writer.writerow(['Produto', 'Quantidade Individual', 'Valor Individual'])
+        writer.writerow([])
+
         for obj in objs:
-            writer.writerow(['Carrinho', 'Quantidade Total', 'Valor Total', 'Data', 'Hora'])
             data = formats.date_format(timezone.localtime(obj.data), "d/m/Y")
             hora = formats.date_format(timezone.localtime(obj.data), "H:i")
             writer.writerow([obj.pk, obj.quantidade, obj.valor, data, hora])
 
             produtos = CarrinhoProdutos.objects.filter(carrinho=obj)
 
-            writer.writerow(['Produto', 'Quantidade Individual', 'Valor Individual'])
             for produto in produtos:
                 writer.writerow([produto.produto.nome, produto.quantidade, produto.valor])
 
