@@ -641,25 +641,26 @@ def finalizar_carrinho(request):
 
     car_prod = CarrinhoProdutos.objects.filter(carrinho=carrinho)
     total = 0
+    qtd = 0
 
     if car_prod:
         total = '%.2f' % car_prod.aggregate(Sum('valor'))['valor__sum']
         qtd = car_prod.aggregate(Sum('quantidade'))['quantidade__sum']
 
-        carrinho.quantidade = qtd
-        carrinho.valor = total
-        carrinho.data = datetime.now()
-        carrinho.status = Carrinho.FECHADO
+        if qtd > 0:
+            carrinho.quantidade = qtd
+            carrinho.valor = total
+            carrinho.data = datetime.now()
+            carrinho.status = Carrinho.FECHADO
 
-        for produto in car_prod:
-            estoque = get_object_or_404(
-                Estoque, empresa=empresa, produto=produto.produto)
+            for produto in car_prod:
+                estoque = get_object_or_404(
+                    Estoque, empresa=empresa, produto=produto.produto)
 
-            estoque.quantidade -= produto.quantidade
-            estoque.save()
+                estoque.quantidade -= produto.quantidade
+                estoque.save()
 
-        carrinho.save()
-
+            carrinho.save()
 
     return HttpResponseRedirect(reverse('estoque:detalhes_carrinho', kwargs={'pk': carrinho.pk}))
 
