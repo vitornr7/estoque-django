@@ -7,9 +7,9 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 
-from .models import Estoque, Empresa, Produto, PedidosFilial, VendasFilial, ComprasCentral, Carrinho, CarrinhoProdutos
+from .models import Estoque, Empresa, Produto, PedidosFilial, ComprasCentral, Carrinho, CarrinhoProdutos
 from .utilidades import paginar, filtrar_valor, converter_data, filtrar_data, get_info
-from .forms import ProdutoForm, EstoqueForm, EstoqueAtualizarForm, ComprasCentralForm, VendasFilialForm, PedidosFilialForm, UsuarioForm, FilialForm, ValorCompraCentralForm, CarrinhoProdutosForm
+from .forms import ProdutoForm, EstoqueForm, EstoqueAtualizarForm, ComprasCentralForm, PedidosFilialForm, UsuarioForm, FilialForm, ValorCompraCentralForm, CarrinhoProdutosForm
 from .gerar_csv import arq_carrinho, arq_compras_central, arq_pedidos, arq_carrinho_produtos
 
 
