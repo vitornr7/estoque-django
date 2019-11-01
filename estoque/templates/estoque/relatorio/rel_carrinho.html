@@ -10,6 +10,10 @@
     <input type="hidden" min="0" name="n_carrinho" value="{{ request.GET.n_carrinho }}">
     <input type="hidden" name="nome_empresa" value="{{ request.GET.nome_empresa }}">
 
-    <button class="btn btn-sm btn-outline-info float-right" type="submit" name="imprimir" value="imprimir">Exportar
-        Relatorio</button>
+    <div class="btn-group" role="group" aria-label="Imprimir Relatorios">
+        <button class="btn btn-sm btn-outline-info" type="submit" name="imprimir" value="imprimir_carrinho">Exportar
+            Relatorio</button>
+        <button class="btn btn-sm btn-outline-info" type="submit" name="imprimir" value="imprimir_car_prod">Exportar
+            Relatorio Completo</button>
+    </div>
 </form>

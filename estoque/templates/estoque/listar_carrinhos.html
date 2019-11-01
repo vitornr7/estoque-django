@@ -37,14 +37,14 @@
     </div>
 </strong>
 
-<div class="row align-items-center">
+<div class="row justify-content-between">
     <div class="col-auto">
         <strong>
             Resultado da busca
             {% if request.GET.n_carrinho %}
-                | Nº car: {{ request.GET.n_carrinho }}
+            | Nº car: {{ request.GET.n_carrinho }}
             {% else %}
-                | Nº car: Todos
+            | Nº car: Todos
             {% endif %}
 
             {% if request.user.is_superuser %}{% include 'estoque/pesquisa/pesq_empresa.html' %}{% endif %}
@@ -52,7 +52,7 @@
             {% include 'estoque/pesquisa/pesq_data.html' %}
         </strong>
     </div>
-    <div class="col">
+    <div class="col-auto">
         {% include 'estoque/relatorio/rel_carrinho.html' %}
     </div>
 </div>

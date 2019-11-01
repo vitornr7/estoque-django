@@ -14,7 +14,7 @@ from datetime import datetime
 from .models import Estoque, Empresa, Produto, PedidosFilial, VendasFilial, ComprasCentral, Carrinho, CarrinhoProdutos
 from .utilidades import paginar, filtrar_valor, converter_data, filtrar_data, get_info
 from .forms import ProdutoForm, EstoqueForm, EstoqueAtualizarForm, ComprasCentralForm, VendasFilialForm, PedidosFilialForm, UsuarioForm, FilialForm, ValorCompraCentralForm, CarrinhoProdutosForm
-from .gerar_csv import arq_carrinho, arq_compras_central, arq_pedidos
+from .gerar_csv import arq_carrinho, arq_compras_central, arq_pedidos, arq_carrinho_produtos
 
 
 @login_required
@@ -734,8 +734,11 @@ def listar_carrinhos(request):
         'data2': data2,
     }
 
-    if imprimir:
+    if imprimir == 'imprimir_carrinho':
         return arq_carrinho(carrinhos, info, opcao_valor, valor1, valor2, opcao_data, n_carrinho, nome_empresa, request.user)
+    elif imprimir == 'imprimir_car_prod':
+        produtos = CarrinhoProdutos.objects.all()
+        return arq_carrinho_produtos(carrinhos, produtos, info, opcao_valor, valor1, valor2, opcao_data, n_carrinho, nome_empresa, request.user)
 
     carrinhos = paginar(carrinhos, page, 3)
 

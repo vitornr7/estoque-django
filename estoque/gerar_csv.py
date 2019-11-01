@@ -1,7 +1,7 @@
 import csv
 from django.http import HttpResponse
 from django.utils import formats, timezone
-from .models import PedidosFilial
+from .models import PedidosFilial, CarrinhoProdutos
 
 
 def arq_carrinho(objs, info, opcao_valor, valor1, valor2, opcao_data, n_carrinho, nome_empresa, usuario):
@@ -39,35 +39,56 @@ def arq_carrinho(objs, info, opcao_valor, valor1, valor2, opcao_data, n_carrinho
     return response
 
 
-# def arq_vendas(objs, info, opcao_valor, valor1, valor2, opcao_data, nome_produto, nome_empresa, usuario):
-#     response = HttpResponse(content_type='text/csv')
-#     response['Content-Disposition'] = 'attachment; filename="relatorio_vendas.csv"'
-#     writer = csv.writer(response)
+def arq_carrinho_produtos(objs, produtos, info, opcao_valor, valor1, valor2, opcao_data, n_carrinho, nome_empresa, usuario):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="relatorio_vendas_completo.csv"'
+    writer = csv.writer(response)
 
-#     writer.writerow(['Relatorio', 'Vendas'])
+    writer.writerow(['Relatorio', 'Vendas Completo'])
 
-#     escrever_empresa(writer, nome_empresa, usuario)
-#     escrever_produto(writer, nome_produto)
-#     escrever_info(writer, info)
-#     escrever_data(writer, opcao_data, info['data1'], info['data2'])
-#     escrever_valor(writer, opcao_valor, valor1, valor2)
+    if n_carrinho:
+        writer.writerow(['Nº carrinho', n_carrinho])
+    else:
+        writer.writerow(['Nº carrinho', 'Todos'])
 
-#     writer.writerow([])
+    escrever_empresa(writer, nome_empresa, usuario)
+    escrever_info(writer, info)
+    escrever_data(writer, opcao_data, info['data1'], info['data2'])
+    escrever_valor(writer, opcao_valor, valor1, valor2)
 
-#     if usuario.is_superuser:
-#         writer.writerow(['Produto', 'Quantidade', 'Total', 'Data', 'Hora', 'Empresa'])
-#         for obj in objs:
-#             data = formats.date_format(timezone.localtime(obj.data), "d/m/Y")
-#             hora = formats.date_format(timezone.localtime(obj.data), "H:i")
-#             writer.writerow([obj.produto.nome, obj.quantidade, obj.valor, data, hora, obj.empresa])
-#     else:
-#         writer.writerow(['Produto', 'Quantidade', 'Total', 'Data', 'Hora'])
-#         for obj in objs:
-#             data = formats.date_format(timezone.localtime(obj.data), "d/m/Y")
-#             hora = formats.date_format(timezone.localtime(obj.data), "H:i")
-#             writer.writerow([obj.produto.nome, obj.quantidade, obj.valor, data, hora])
+    writer.writerow([])
 
-#     return response
+    if usuario.is_superuser:
+        for obj in objs:
+            writer.writerow(['Carrinho', 'Quantidade', 'Valor', 'Data', 'Hora', 'Empresa'])
+            data = formats.date_format(timezone.localtime(obj.data), "d/m/Y")
+            hora = formats.date_format(timezone.localtime(obj.data), "H:i")
+            writer.writerow([obj.pk, obj.quantidade, obj.valor, data, hora, obj.empresa])
+
+            produtos = CarrinhoProdutos.objects.filter(carrinho=obj)
+
+            writer.writerow(['Produto', 'Quantidade Individual', 'Valor Individual'])
+            for produto in produtos:
+                writer.writerow([produto.produto.nome, produto.quantidade, produto.valor])
+
+            writer.writerow([])
+    else:
+        for obj in objs:
+            writer.writerow(['Carrinho', 'Quantidade Total', 'Valor Total', 'Data', 'Hora'])
+            data = formats.date_format(timezone.localtime(obj.data), "d/m/Y")
+            hora = formats.date_format(timezone.localtime(obj.data), "H:i")
+            writer.writerow([obj.pk, obj.quantidade, obj.valor, data, hora])
+
+            produtos = CarrinhoProdutos.objects.filter(carrinho=obj)
+
+            writer.writerow(['Produto', 'Quantidade Individual', 'Valor Individual'])
+            for produto in produtos:
+                writer.writerow([produto.produto.nome, produto.quantidade, produto.valor])
+
+            writer.writerow([])
+
+
+    return response
 
 
 def arq_compras_central(objs, info, opcao_valor, valor1, valor2, opcao_data, nome_produto):
