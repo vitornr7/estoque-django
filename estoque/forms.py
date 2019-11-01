@@ -9,6 +9,10 @@ class ProdutoForm(ModelForm):
     class Meta():
         model = Produto
         fields = ['nome', 'codigo', 'valor']
+        labels = {
+            'codigo': ('Código'),
+            'valor': ('Preço do produto'),
+        }
 
 
 class EstoqueForm(ModelForm):

@@ -90,9 +90,9 @@ def cadastrar_produto(request):
     if request.user.is_superuser:
         if request.method == "POST":
             empresa = get_object_or_404(Empresa, usuario=request.user)
-            produto_form = ProdutoForm(data=request.POST)
-            estoque_form = EstoqueForm(data=request.POST)
-            valor_compra_form = ValorCompraCentralForm(data=request.POST)
+            produto_form = ProdutoForm(prefix='produto',data=request.POST)
+            estoque_form = EstoqueForm(prefix='estoque',data=request.POST)
+            valor_compra_form = ValorCompraCentralForm(prefix='val_compra',data=request.POST)
 
             if produto_form.is_valid() and estoque_form.is_valid() and valor_compra_form:
                 produto = produto_form.save()
@@ -110,9 +110,9 @@ def cadastrar_produto(request):
 
                 return HttpResponseRedirect(reverse('estoque:detalhes_produto', kwargs={'pk': produto.pk}))
         else:
-            produto_form = ProdutoForm()
-            estoque_form = EstoqueForm()
-            valor_compra_form = ValorCompraCentralForm()
+            produto_form = ProdutoForm(prefix='produto')
+            estoque_form = EstoqueForm(prefix='estoque')
+            valor_compra_form = ValorCompraCentralForm(prefix='val_compra')
 
         return render(request, 'estoque/cadastro_produto.html', {'produto_form': produto_form, 'estoque_form': estoque_form, 'valor_compra_form': valor_compra_form})
 
@@ -375,8 +375,8 @@ def cadastrar_filial(request):
         registrado = False
 
         if request.method == "POST":
-            usuario_form = UsuarioForm(data=request.POST)
-            filial_form = FilialForm(data=request.POST)
+            usuario_form = UsuarioForm(prefix='usuario', data=request.POST)
+            filial_form = FilialForm(prefix='filial', data=request.POST)
 
             if usuario_form.is_valid() and filial_form.is_valid():
                 usuario = usuario_form.save()
@@ -390,8 +390,8 @@ def cadastrar_filial(request):
 
                 registrado = True
         else:
-            usuario_form = UsuarioForm()
-            filial_form = FilialForm()
+            usuario_form = UsuarioForm(prefix='usuario')
+            filial_form = FilialForm(prefix='filial')
 
         return render(request, 'estoque/cadastrar_filial.html', {'usuario_form': usuario_form, 'filial_form': filial_form, 'registrado': registrado})
     return render(request, 'estoque/cadastrar_filial.html')
