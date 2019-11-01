@@ -29,8 +29,6 @@ urlpatterns = [
     path('listar_compras_central/', views.listar_compras_central,
          name='listar_compras_central'),
 
-    path('filial_vender/<int:pk>', views.filial_vender, name='filial_vender'),
-
     path('adicionar_ao_carrinho/<int:pk>',
          views.adicionar_ao_carrinho, name='adicionar_ao_carrinho'),
     path('filial_pedido/<int:pk>', views.filial_pedido, name='filial_pedido'),
