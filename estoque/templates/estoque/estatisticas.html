@@ -75,18 +75,20 @@
             </tr>
         </thead>
         <tbody>
-            {% for venda in vendas %}
+            {% for produto in produtos %}
             <tr>
                 {% if request.user.is_superuser %}
                 <td>
-                    {{ venda.nome_empresa }}
+                    {{ produto.carrinho.empresa }}
                 </td>
                 {% endif %}
+                {% comment %}
                 <td>
-                    <a href="{% url 'estoque:detalhes_produto' venda.id_prod %}">{{ venda.nome_prod }}</a>
+                    <a href="{% url 'estoque:detalhes_produto' produto.produto.pk %}">{{ produto.produto.nome }}</a>
                 </td>
+                {% endcomment %}
                 <td>
-                    {{ venda.qtd_vendida }}
+                    {{ produto.quantidade }}
                 </td>
             </tr>
             {% empty %}
@@ -100,6 +102,7 @@
     </table>
 </div>
 
+{% comment %}
 {% if vendas.has_other_pages %}
 
 <ul class="pagination float-right">
@@ -125,5 +128,31 @@
 </ul>
 
 {% endif %}
+{% endcomment %}
+
+<hr>
+
+
+{% for produto in produtos %}
+<ul>
+    <li>{{ produto.carrinho.empresa }}</li>
+    <li><a href="{% url 'estoque:detalhes_produto' produto.produto.pk %}">{{ produto.produto.nome }}</a></li>
+    <li>{{ produto.quantidade }}</li>
+</ul>
+{% empty %}
+<h4>Nenhum resultado encontrado.</h4>
+
+{% endfor %}
+
+<hr>
+
+{% for t in teste %}
+<ul>
+    <li>{{ t }}</li>
+</ul>
+{% empty %}
+<h4>Nenhum resultado encontrado.</h4>
+
+{% endfor %}
 
 {% endblock %}
