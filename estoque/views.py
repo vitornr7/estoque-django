@@ -11,6 +11,7 @@ from .models import Estoque, Empresa, Produto, PedidosFilial, ComprasCentral, Ca
 from .utilidades import paginar, filtrar_valor, converter_data, filtrar_data, get_info
 from .forms import ProdutoForm, EstoqueForm, EstoqueAtualizarForm, ComprasCentralForm, PedidosFilialForm, UsuarioForm, FilialForm, ValorCompraCentralForm, CarrinhoProdutosForm
 from .gerar_csv import arq_carrinho, arq_compras_central, arq_pedidos, arq_carrinho_produtos
+from .gerar_pdf import comprovante_carrinho
 
 
 @login_required
@@ -706,3 +707,20 @@ def estatisticas(request):
     info = paginar(info, page, 3)
 
     return render(request, 'estoque/estatisticas.html', {'info': info})
+
+
+@login_required
+def imprimir_comprovante_carrinho_pdf(request, pk):
+    empresa = get_object_or_404(Empresa, usuario=request.user)
+
+    if request.user.is_superuser:
+        carrinho = get_object_or_404(Carrinho, pk=pk)
+    else:
+        carrinho = get_object_or_404(Carrinho, pk=pk, empresa=empresa)
+
+    if carrinho.status == Carrinho.ABERTO:
+        return HttpResponseRedirect(reverse('estoque:carrinho'))
+
+    car_prod = CarrinhoProdutos.objects.filter(carrinho=carrinho)
+
+    return comprovante_carrinho(carrinho, car_prod)

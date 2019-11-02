@@ -5,7 +5,7 @@
 <h1>Estatísticas</h1>
 
 <hr>
-{# action="{% url 'estoque:listar_produtos' %}" #}
+
 <form class="form-group" method="GET">
     <div class="form-row align-items-center">
 
@@ -69,7 +69,6 @@
     <table class="table table-striped table-bordered table-sm">
         <thead class="thead-dark">
             <tr>
-                {% comment %}{% if request.user.is_superuser %}<th scope="col">Empresa</th>{% endif %}{% endcomment %}
                 <th scope="col">Produto</th>
                 <th scope="col">Quantidade</th>
             </tr>
@@ -77,14 +76,6 @@
         <tbody>
             {% for i in info %}
             <tr>
-                {% comment %}
-                {% if request.user.is_superuser %}
-                <td>
-                    {{ produto.carrinho.empresa }}
-                </td>
-                {% endif %}
-                {% endcomment %}
-
                 <td>
                     <a href="{% url 'estoque:detalhes_produto' i.produto %}">{{ i.nomeprod }}</a>
                 </td>
@@ -130,5 +121,3 @@
 {% endif %}
 
 {% endblock %}
-
-mes=&nome_empresa=&menos_vendidos=
