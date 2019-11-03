@@ -699,7 +699,7 @@ def estatisticas(request):
 
     if ano:
         ano = int(ano)
-        if ano < 5001:
+        if ano > 1 and ano < 9999:
             produtos = produtos.filter(carrinho__data__year=ano)
 
     if nome_empresa and request.user.is_superuser:
