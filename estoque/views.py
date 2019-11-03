@@ -679,6 +679,7 @@ def estatisticas(request):
     nome_produto = request.GET.get('nome_produto')
     nome_empresa = request.GET.get('nome_empresa')
     mes = request.GET.get('mes')
+    ano = request.GET.get('ano')
     menos_vendidos = request.GET.get('menos_vendidos')
 
     if mes:
@@ -695,6 +696,11 @@ def estatisticas(request):
 
     if mes != 0:
         produtos = produtos.filter(carrinho__data__month=mes)
+
+    if ano:
+        ano = int(ano)
+        if ano < 5001:
+            produtos = produtos.filter(carrinho__data__year=ano)
 
     if nome_empresa and request.user.is_superuser:
         produtos = produtos.filter(carrinho__empresa__usuario__username=nome_empresa)
