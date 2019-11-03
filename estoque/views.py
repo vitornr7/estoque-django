@@ -676,6 +676,7 @@ def listar_carrinhos(request):
 @login_required
 def estatisticas(request):
     page = request.GET.get('page', 1)
+    nome_produto = request.GET.get('nome_produto')
     nome_empresa = request.GET.get('nome_empresa')
     mes = request.GET.get('mes')
     menos_vendidos = request.GET.get('menos_vendidos')
@@ -697,6 +698,12 @@ def estatisticas(request):
 
     if nome_empresa and request.user.is_superuser:
         produtos = produtos.filter(carrinho__empresa__usuario__username=nome_empresa)
+
+    if nome_produto:
+        if nome_produto.isdigit():
+            produtos = produtos.filter(produto__codigo=nome_produto)
+        else:
+            produtos = produtos.filter(produto__nome__icontains=nome_produto)
 
 
     if menos_vendidos:

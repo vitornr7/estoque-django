@@ -35,6 +35,7 @@
         {% if request.user.is_superuser %}
         {% include 'estoque/pesquisa/empresa.html' %}
         {% endif %}
+        {% include 'estoque/pesquisa/produto.html' %}
 
         <div class="form-group col">
             <div class="form-check form-check-inline">
@@ -56,6 +57,8 @@
             Resultado da busca
             {% include 'estoque/pesquisa/pesq_mes.html' %}
             {% if request.user.is_superuser %}{% include 'estoque/pesquisa/pesq_empresa.html' %}{% endif %}
+            {% include 'estoque/pesquisa/pesq_produto.html' %}
+
             {% if request.GET.menos_vendidos %}
             | Menos vendidos
             {% else %}
@@ -103,7 +106,7 @@
 
     {% if info.has_previous %}
     <li class="page-item"><a class="page-link"
-            href="?mes={{ request.GET.mes }}&nome_empresa={{ request.GET.nome_empresa }}&menos_vendidos={{ request.GET.menos_vendidos }}&page={{ info.previous_page_number }}">Anterior</a>
+            href="?mes={{ request.GET.mes }}&nome_empresa={{ request.GET.nome_empresa }}&nome_produto={{ request.GET.nome_produto }}&menos_vendidos={{ request.GET.menos_vendidos }}&page={{ info.previous_page_number }}">Anterior</a>
     </li>
     {% else %}
     <li class="page-item disabled"><span class="page-link">Anterior</span></li>
@@ -111,7 +114,7 @@
 
     {% if info.has_next %}
     <li class="page-item"><a class="page-link"
-            href="?mes={{ request.GET.mes }}&nome_empresa={{ request.GET.nome_empresa }}&menos_vendidos={{ request.GET.menos_vendidos }}&page={{ info.next_page_number }}">Proxima</a>
+            href="?mes={{ request.GET.mes }}&nome_empresa={{ request.GET.nome_empresa }}&nome_produto={{ request.GET.nome_produto }}&menos_vendidos={{ request.GET.menos_vendidos }}&page={{ info.next_page_number }}">Proxima</a>
     </li>
     {% else %}
     <li class="page-item disabled"><span class="page-link">Proxima</span></li>
