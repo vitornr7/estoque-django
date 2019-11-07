@@ -758,7 +758,7 @@ def atualizar_filial(request, pk):
                 usuario = usuario_form.save()
                 if len(senha) > 0:
                     usuario.set_password(senha)
-                usuario.save()
+                    usuario.save()
 
                 filial = filial_form.save(commit=False)
                 filial.usuario = usuario
