@@ -26,7 +26,7 @@ SECRET_KEY = '+g)9&#hm0o)sygr-hhxbup0d2*!a1zpgd$tg2=f*cwxsi+kg9f'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['186.233.71.11', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['186.233.71.11', '127.0.0.1', 'localhost', 'vitorn.pythonanywhere.com']
 
 
 # Application definition
@@ -126,7 +126,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
-STATIC_ROOT = os.path.join(BASE_DIR, "static")
+STATIC_ROOT = os.path.join(BASE_DIR, "assets")
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = 'media'
