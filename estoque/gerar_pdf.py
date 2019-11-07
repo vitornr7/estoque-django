@@ -1,6 +1,7 @@
 from django.http import HttpResponse
 from fpdf import FPDF
 from django.utils import formats, timezone
+import os
 
 
 def comprovante_carrinho(carrinho, produtos):
@@ -20,6 +21,12 @@ def comprovante_carrinho(carrinho, produtos):
     quantidade = str(carrinho.quantidade)
 
     titulo = 'Comprovante da compra'
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    folder = os.path.join(BASE_DIR, 'static')
+    logo = folder + '/logo_preto.png'
+    pdf.image(logo, x = 10, y = 10, w = 30, h = 30)
+
+    pdf.cell(50, 15, txt = '', border = 0, ln =1)
     pdf.cell(50, 10)
     pdf.cell(pdf.get_string_width(titulo) + 3, 10, titulo, 'B', 0)
 
