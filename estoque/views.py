@@ -9,7 +9,7 @@ from django.contrib import messages
 
 from .models import Estoque, Empresa, Produto, PedidosFilial, ComprasCentral, Carrinho, CarrinhoProdutos
 from .utilidades import paginar, filtrar_valor, converter_data, filtrar_data, get_info
-from .forms import ProdutoForm, EstoqueForm, EstoqueAtualizarForm, ComprasCentralForm, PedidosFilialForm, UsuarioForm, FilialForm, ValorCompraCentralForm, CarrinhoProdutosForm
+from .forms import ProdutoForm, EstoqueForm, EstoqueAtualizarForm, ComprasCentralForm, PedidosFilialForm, UsuarioForm, FilialForm, ValorCompraCentralForm, CarrinhoProdutosForm, UsuarioFormAtualizar, UsuarioFormSenha
 from .gerar_csv import arq_carrinho, arq_compras_central, arq_pedidos, arq_carrinho_produtos
 from .gerar_pdf import comprovante_carrinho
 
@@ -744,15 +744,20 @@ def atualizar_filial(request, pk):
         filial = get_object_or_404(Empresa, pk=pk, filial=True)
 
         filial_form = FilialForm(prefix='filial',instance=filial)
-        usuario_form = UsuarioForm(prefix='usuario', instance=filial.usuario)
+        usuario_form = UsuarioFormAtualizar(prefix='usuario', instance=filial.usuario)
+        usuario_senha_form = UsuarioFormSenha(prefix='usuario_senha')
 
         if request.method == "POST":
-            usuario_form = UsuarioForm(prefix='usuario', data=request.POST, instance=filial.usuario)
             filial_form = FilialForm(prefix='filial', data=request.POST, instance=filial)
+            usuario_form = UsuarioFormAtualizar(prefix='usuario', data=request.POST, instance=filial.usuario)
+            usuario_senha_form = UsuarioFormSenha(prefix='usuario_senha', data=request.POST)
 
-            if usuario_form.is_valid() and filial_form.is_valid():
+            if usuario_form.is_valid() and filial_form.is_valid() and usuario_senha_form.is_valid():
+                senha = usuario_senha_form.cleaned_data['password']
+
                 usuario = usuario_form.save()
-                usuario.set_password(usuario.password)
+                if len(senha) > 0:
+                    usuario.set_password(senha)
                 usuario.save()
 
                 filial = filial_form.save(commit=False)
@@ -762,6 +767,6 @@ def atualizar_filial(request, pk):
 
                 return HttpResponseRedirect(reverse('estoque:listar_filiais'))
 
-        return render(request, 'estoque/cadastrar_filial.html', {'usuario_form': usuario_form, 'filial_form': filial_form})
+        return render(request, 'estoque/cadastrar_filial.html', {'usuario_form': usuario_form, 'filial_form': filial_form, 'usuario_senha_form': usuario_senha_form})
 
     return render(request, 'estoque/cadastrar_filial.html')

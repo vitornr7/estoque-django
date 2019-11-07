@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404
-from django.forms import Form, ModelForm, ValidationError, HiddenInput, DateField
+from django.forms import Form, ModelForm, ValidationError, HiddenInput, DateField, CharField, PasswordInput
 from django.contrib.auth.models import User
 
 from .models import Estoque, Produto, ComprasCentral, Empresa, PedidosFilial, CarrinhoProdutos
@@ -37,6 +37,9 @@ class UsuarioForm(ModelForm):
     class Meta():
         model = User
         fields = ('username', 'email', 'password')
+        widgets = {
+            'password': PasswordInput(),
+        }
 
 
 class FilialForm(ModelForm):
@@ -78,3 +81,17 @@ class CarrinhoProdutosForm(ModelForm):
                 "Tentativa de venda com quantidade maior que a disponivel: " + str(estoque_qtd))
 
         return quantidade
+
+
+class UsuarioFormAtualizar(ModelForm):
+    class Meta():
+        model = User
+        fields = ('username', 'email')
+
+
+class UsuarioFormSenha(ModelForm):
+    password = CharField(widget=PasswordInput, required=False, label='Senha')
+
+    class Meta():
+        model = User
+        fields = ('password', )

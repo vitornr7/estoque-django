@@ -17,6 +17,7 @@
     <form method="POST">
         {% csrf_token %}
         {{ usuario_form|crispy }}
+        {{ usuario_senha_form|crispy }}
         {{ filial_form|crispy }}
         <hr>
         <input type="submit" value="Salvar" class="btn btn-success btn-block">
