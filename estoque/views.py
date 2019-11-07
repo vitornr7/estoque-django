@@ -337,7 +337,6 @@ def reprovar_pedido(request, pk):
 @login_required
 def cadastrar_filial(request):
     if request.user.is_superuser:
-        registrado = False
 
         if request.method == "POST":
             usuario_form = UsuarioForm(prefix='usuario', data=request.POST)
@@ -353,12 +352,12 @@ def cadastrar_filial(request):
 
                 filial.save()
 
-                registrado = True
+                return HttpResponseRedirect(reverse('estoque:listar_filiais'))
         else:
             usuario_form = UsuarioForm(prefix='usuario')
             filial_form = FilialForm(prefix='filial')
 
-        return render(request, 'estoque/cadastrar_filial.html', {'usuario_form': usuario_form, 'filial_form': filial_form, 'registrado': registrado})
+        return render(request, 'estoque/cadastrar_filial.html', {'usuario_form': usuario_form, 'filial_form': filial_form})
     return render(request, 'estoque/cadastrar_filial.html')
 
 
@@ -737,3 +736,32 @@ def imprimir_comprovante_carrinho_pdf(request, pk):
     car_prod = CarrinhoProdutos.objects.filter(carrinho=carrinho)
 
     return comprovante_carrinho(carrinho, car_prod)
+
+
+@login_required
+def atualizar_filial(request, pk):
+    if request.user.is_superuser:
+        filial = get_object_or_404(Empresa, pk=pk, filial=True)
+
+        filial_form = FilialForm(prefix='filial',instance=filial)
+        usuario_form = UsuarioForm(prefix='usuario', instance=filial.usuario)
+
+        if request.method == "POST":
+            usuario_form = UsuarioForm(prefix='usuario', data=request.POST, instance=filial.usuario)
+            filial_form = FilialForm(prefix='filial', data=request.POST, instance=filial)
+
+            if usuario_form.is_valid() and filial_form.is_valid():
+                usuario = usuario_form.save()
+                usuario.set_password(usuario.password)
+                usuario.save()
+
+                filial = filial_form.save(commit=False)
+                filial.usuario = usuario
+
+                filial.save()
+
+                return HttpResponseRedirect(reverse('estoque:listar_filiais'))
+
+        return render(request, 'estoque/cadastrar_filial.html', {'usuario_form': usuario_form, 'filial_form': filial_form})
+
+    return render(request, 'estoque/cadastrar_filial.html')

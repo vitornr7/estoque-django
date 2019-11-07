@@ -42,6 +42,7 @@ urlpatterns = [
     path('listar_carrinhos/', views.listar_carrinhos, name='listar_carrinhos'),
 
     path('imprimir_comprovante_carrinho_pdf/<int:pk>', views.imprimir_comprovante_carrinho_pdf, name='imprimir_comprovante_carrinho_pdf'),
+    path('atualizar_filial/<int:pk>', views.atualizar_filial, name='atualizar_filial'),
 
     path('estatisticas/', views.estatisticas, name='estatisticas'),
 ]

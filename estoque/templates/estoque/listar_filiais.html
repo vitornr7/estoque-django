@@ -61,6 +61,7 @@
                 <th scope="col">Usuario</th>
                 <th scope="col">Email</th>
                 <th scope="col">Endereço</th>
+                <th scope="col">Opções</th>
             </tr>
         </thead>
         <tbody>
@@ -74,6 +75,9 @@
                 </td>
                 <td>
                     {{ filial.endereco }}
+                </td>
+                <td>
+                    <a href="{% url 'estoque:atualizar_filial' filial.pk %}">Atualizar</a>
                 </td>
             </tr>
             {% empty %}

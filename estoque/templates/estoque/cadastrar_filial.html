@@ -3,12 +3,14 @@
 
 {% block corpo %}
 
-{% if request.user.is_superuser %}
 <div class="jumbotron">
-    {% if registrado %}
-    <h1>Registrado com sucesso.</h1>
-    {% else %}
+{% if request.user.is_superuser %}
+
+    {% if not filial_form.instance.pk %}
     <h1>Cadastrar Filial</h1>
+    {% else %}
+    <h1>Atualizar Filial</h1>
+    {% endif %}
 
     <hr>
 
@@ -19,8 +21,6 @@
         <hr>
         <input type="submit" value="Salvar" class="btn btn-success btn-block">
     </form>
-</div>
-{% endif %}
 
 {% else %}
 <h3>Você não possui permissão para concluir esta ação.</h3>
@@ -28,5 +28,6 @@
 <a href="{% url 'estoque:avisos' %}" class="btn btn-block btn-primary">Retornar</a>
 
 {% endif %}
+</div>
 
 {% endblock %}
