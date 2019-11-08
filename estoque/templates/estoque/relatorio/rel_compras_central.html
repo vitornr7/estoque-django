@@ -1,3 +1,5 @@
+{% load static %}
+
 <form method="GET">
     <input type="hidden" name="opcao_data" value="{{ request.GET.opcao_data }}">
     <input type="hidden" name="d1" value="{{ request.GET.d1 }}">
@@ -10,5 +12,5 @@
     <input type="hidden" name="nome_produto" value="{{ request.GET.nome_produto }}">
 
     <button class="btn btn-sm btn-outline-info float-right" type="submit" name="imprimir"
-        value="imprimir">Exportar Relatorio</button>
+        value="imprimir"><img src="{% static 'icons/print.svg' %}" class="img-fluid" alt="icone"> Exportar Relatorio</button>
 </form>

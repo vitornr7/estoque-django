@@ -109,7 +109,7 @@
                 {% if request.user.is_superuser and status_pedido == 0 %}
                 <td>
                     <a href="{% url 'estoque:aprovar_pedido' pedido.id %}"
-                        class="badge badge-pill badge-success"><img src="{% static 'icons/check-mini.svg' %}" class="" alt="icone"> Aprovar</a>
+                        class="badge badge-pill badge-success"><img src="{% static 'icons/check-mini.svg' %}" class="img-fluid" alt="icone"> Aprovar</a>
                     <a href="{% url 'estoque:reprovar_pedido' pedido.id %}"
                         class="badge badge-pill badge-danger"><img src="{% static 'icons/x.svg' %}" class="img-fluid" alt="icone"> Reprovar</a>
                 </td>
