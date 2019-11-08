@@ -1,3 +1,5 @@
+{% load static %}
+
 <input type="hidden" name="opcao_data" id="radiodata1" value="{{ request.GET.opcao_data }}">
 <input type="hidden" name="d1" value="{{ request.GET.d1 }}">
 <input type="hidden" name="d2" value="{{ request.GET.d2 }}">
@@ -6,4 +8,4 @@
 <input type="hidden" min="0" step="0.01" name="valor1" value="{{ request.GET.valor1 }}">
 <input type="hidden" min="0" step="0.01" name="valor2" value="{{ request.GET.valor2 }}">
 
-<button class="btn btn-sm btn-outline-primary float-right" type="submit" name="opcao_pesquisa" value="imprimir">Exportar Relatorio</button>
+<button class="btn btn-sm btn-outline-primary float-right" type="submit" name="opcao_pesquisa" value="imprimir"><img src="{% static 'icons/print.svg' %}" class="img-fluid" alt="icone"> Exportar Relatorio</button>

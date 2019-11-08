@@ -68,8 +68,8 @@
                 {% endif %}
             </ul>
 
-            <a class="nav-link" href="#">Logado como: {{ user.username }}</a>
-            <a class="nav-link" href="{% url 'logout' %}">Encerrar Sessão<span class="sr-only">(current)</span></a>
+            <a class="nav-link" href="#"><img src="{% static 'icons/person.svg' %}" class="img-fluid" alt="icone"> Logado como: {{ user.username }}</a>
+            <a class="nav-link" href="{% url 'logout' %}"><img src="{% static 'icons/sign-out.svg' %}" class="img-fluid" alt="icone"> Encerrar Sessão<span class="sr-only">(current)</span></a>
 
         </div>
     </nav>

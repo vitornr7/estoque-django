@@ -1,3 +1,5 @@
+{% load static %}
+
 <form method="GET">
     <input type="hidden" name="opcao_data" value="{{ request.GET.opcao_data }}">
     <input type="hidden" name="d1" value="{{ request.GET.d1 }}">
@@ -11,9 +13,9 @@
     <input type="hidden" name="nome_empresa" value="{{ request.GET.nome_empresa }}">
 
     <div class="btn-group" role="group" aria-label="Imprimir Relatorios">
-        <button class="btn btn-sm btn-outline-info" type="submit" name="imprimir" value="imprimir_carrinho">Exportar
+        <button class="btn btn-sm btn-outline-info" type="submit" name="imprimir" value="imprimir_carrinho"><img src="{% static 'icons/print.svg' %}" class="img-fluid" alt="icone"> Exportar
             Relatorio</button>
-        <button class="btn btn-sm btn-outline-info" type="submit" name="imprimir" value="imprimir_car_prod">Exportar
+        <button class="btn btn-sm btn-outline-info" type="submit" name="imprimir" value="imprimir_car_prod"><img src="{% static 'icons/print.svg' %}" class="img-fluid" alt="icone"> Exportar
             Relatorio Completo</button>
     </div>
 </form>

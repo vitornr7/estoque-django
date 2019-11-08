@@ -1,5 +1,5 @@
 {% extends 'estoque/base.html' %}
-
+{% load static %}
 {% block corpo %}
 
 <h1>Vendas</h1>
@@ -19,7 +19,7 @@
         {% include 'estoque/pesquisa/empresa.html' %}
         {% endif %}
         <div class="form-group col">
-            <button class="btn btn-outline-primary btn-sm" type="submit">Pesquisar</button>
+            <button class="btn btn-outline-primary btn-sm" type="submit">Pesquisar <img src="{% static 'icons/search.svg' %}" class="img-fluid" alt="icone"></button>
         </div>
     </div>
 </form>
@@ -90,7 +90,7 @@
                     {{ carrinho.data }}
                 </td>
                 <td>
-                    <a href="{% url 'estoque:detalhes_carrinho' carrinho.id %}">detalhes</a>
+                    <a href="{% url 'estoque:detalhes_carrinho' carrinho.id %}">Detalhes</a>
                 </td>
             </tr>
             {% empty %}

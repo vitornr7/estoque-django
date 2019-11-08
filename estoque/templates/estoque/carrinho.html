@@ -1,4 +1,5 @@
 {% extends 'estoque/base.html' %}
+{% load static %}
 
 {% block corpo %}
 
@@ -47,9 +48,9 @@
                 </td>
                 <td>
                     <a href="{% url 'estoque:alterar_quantidade_carrinho' prod.produto.pk %}"
-                        class="badge badge-pill badge-warning">alterar</a>
+                        class="badge badge-pill badge-warning"><img src="{% static 'icons/pencil.svg' %}" class="img-fluid" alt="icone"> alterar</a>
                     <a href="{% url 'estoque:remover_do_carrinho' prod.produto.pk %}"
-                        class="badge badge-pill badge-danger">remover</a>
+                        class="badge badge-pill badge-danger"><img src="{% static 'icons/trashcan.svg' %}" class="img-fluid" alt="icone"> remover</a>
                 </td>
             </tr>
             {% empty %}
@@ -72,7 +73,7 @@
                     <strong>{{ total }}</strong>
                 </td>
                 <td>
-                    <h4><a href="{% url 'estoque:finalizar_carrinho' %}" class="badge badge-success">&nbsp;&nbsp;Finalizar&nbsp;&nbsp;</a></h4>
+                    <h4><a href="{% url 'estoque:finalizar_carrinho' %}" class="badge badge-success">&nbsp;&nbsp;Finalizar&nbsp;&nbsp;<img src="{% static 'icons/check.svg' %}" class="img-fluid" alt="icone"></a></h4>
                 </td>
             </tr>
             {% endif %}

@@ -1,5 +1,5 @@
 {% extends 'estoque/base.html' %}
-
+{% load static %}
 {% block corpo %}
 
 <h1>Produtos</h1>
@@ -14,7 +14,7 @@
             <input class="form-control form-control-sm" type="text" placeholder="Nome/Cod" aria-label="Search" name="q">
         </div>
         <div class="form-group col">
-            <button class="btn btn-outline-primary btn-sm" type="submit">Pesquisar</button>
+            <button class="btn btn-outline-primary btn-sm" type="submit">Pesquisar <img src="{% static 'icons/search.svg' %}" class="img-fluid" alt="icone"></button>
         </div>
     </div>
 </form>
@@ -61,7 +61,7 @@
                 </td>
                 {% if not request.user.is_superuser %}
                 <td>
-                    <a href="{% url 'estoque:adicionar_ao_carrinho' prod.id %}">+carrinho</a>
+                    <a href="{% url 'estoque:adicionar_ao_carrinho' prod.id %}"><img src="{% static 'icons/cart.svg' %}" class="img-fluid" alt="icone">+carrinho</a>
                 </td>
                 {% endif %}
             </tr>
