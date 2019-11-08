@@ -22,8 +22,8 @@ def comprovante_carrinho(carrinho, produtos):
 
     titulo = 'Comprovante da compra'
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    folder = os.path.join(BASE_DIR, 'static')
-    logo = folder + '/logo_preto.png'
+    folder = os.path.join(BASE_DIR, 'static/images')
+    logo = folder + '/logo_3_preto.png'
     pdf.image(logo, x = 10, y = 10, w = 30, h = 30)
 
     pdf.cell(50, 15, txt = '', border = 0, ln =1)
