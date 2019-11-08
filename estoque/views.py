@@ -502,10 +502,12 @@ def carrinho(request):
 
     car_prod = CarrinhoProdutos.objects.filter(carrinho=carrinho)
     total = 0
+    qtd = 0
     if car_prod:
         total = '%.2f' % car_prod.aggregate(Sum('valor'))['valor__sum']
+        qtd = car_prod.aggregate(Sum('quantidade'))['quantidade__sum']
 
-    return render(request, 'estoque/carrinho.html', {'car_prod': car_prod, 'total': total})
+    return render(request, 'estoque/carrinho.html', {'car_prod': car_prod, 'total': total, 'qtd': qtd})
 
 
 @login_required
