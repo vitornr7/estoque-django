@@ -19,7 +19,8 @@
         {% include 'estoque/pesquisa/empresa.html' %}
         {% endif %}
         <div class="form-group col">
-            <button class="btn btn-outline-primary btn-sm" type="submit">Pesquisar <img src="{% static 'icons/search.svg' %}" class="img-fluid" alt="icone"></button>
+            <button class="btn btn-outline-primary btn-sm" type="submit">Pesquisar <img
+                    src="{% static 'icons/search.svg' %}" class="img-fluid" alt="icone"></button>
         </div>
     </div>
 </form>
@@ -39,7 +40,7 @@
 
 <div class="row justify-content-between">
     <div class="col-auto">
-        <strong>
+        <strong style="font-size:14px">
             Resultado da busca
             {% if request.GET.n_carrinho %}
             | Nº car: {{ request.GET.n_carrinho }}
