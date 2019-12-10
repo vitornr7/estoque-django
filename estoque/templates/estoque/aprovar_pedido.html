@@ -29,7 +29,7 @@
     </tr>
     <tr>
         <td>Produto</td>
-        <td>{{ pedido.produto }}</td>
+        <td><a href="{% url 'estoque:detalhes_produto' pedido.produto.id %}">{{ pedido.produto }}</a></td>
     </tr>
     <tr>
         <td>Quantidade</td>
