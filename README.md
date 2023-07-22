@@ -21,7 +21,7 @@ Sistema de controle de estoque para papelarias feito com python, django e bootst
 ```
 
 ### Executando o servidor
-```
+``` console
 ~$ python manage.py runserver
 ```
 
