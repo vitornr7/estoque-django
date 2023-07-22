@@ -17,8 +17,8 @@ $ python manage.py runserver
 ```
 
 ## Adicionando a loja central
-- Visite a página admin do Django localhost:port/admin (http://localhost:8000/admin - padrão) e insira as informações do admin criado (createsuperuser)
-- Na seção ESTOQUE, selecione Adicionar na linha/opção Empresas
-- Em Usuário selecione a conta admin criada
-- Desmarque a opção Filial, insira um endereço e salve
-- Selecione ENCERRAR SESSÃO (canto superior direito)
+1. Visite a página admin do Django localhost:port/admin (http://localhost:8000/admin - padrão) e insira as informações do admin criado (createsuperuser)
+2. Na seção ESTOQUE, selecione Adicionar na linha/opção Empresas
+3. Em Usuário selecione a conta admin criada
+4. Desmarque a opção Filial, insira um endereço e salve
+5. Selecione ENCERRAR SESSÃO (canto superior direito)
