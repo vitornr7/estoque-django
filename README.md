@@ -2,30 +2,29 @@
 Sistema de controle de estoque para papelarias feito com python, django e bootstrap.
 
 # Executando o projeto
-## Dependências
+## Instale as Dependências
 ``` console
 ~$ pip install Django==2.2.6 django-crispy-forms==1.14.0 fpdf
 ```
 
-## Migrações e conta administradora
-### Migrações
+## Faça as migrações
 ``` console
 ~$ python manage.py makemigrations
 ~$ python manage.py makemigrations estoque
 ~$ python manage.py migrate
 ```
 
-### Criando uma conta administradora
+## Crie uma conta administradora
 ``` console
 ~$ python manage.py createsuperuser
 ```
 
-### Executando o servidor
+## Execute o servidor
 ``` console
 ~$ python manage.py runserver
 ```
 
-## Adicionando a loja central
+## Adicione uma loja central
 1. Visite a página admin do Django localhost:port/admin (http://localhost:8000/admin - padrão) e insira as informações do admin criado (createsuperuser)
 2. Na seção ESTOQUE, selecione Adicionar na linha/opção Empresas
 3. Em Usuário selecione a conta admin criada
