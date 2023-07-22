@@ -1,18 +1,27 @@
 # Descrição
-Sistema de controle de estoque para papelarias feito com python, django e bootstrap
+Sistema de controle de estoque para papelarias feito com python, django e bootstrap.
 
-# "Rodando" o projeto
-## Instale as dependências
+# Executando o projeto
+## Dependências
 ``` console
 ~$ pip install Django==2.2.6 django-crispy-forms==1.14.0 fpdf
 ```
 
 ## Migrações e conta administradora
+Migrações
 ``` console
 ~$ python manage.py makemigrations
 ~$ python manage.py makemigrations estoque
 ~$ python manage.py migrate
+```
+
+Criando uma conta administradora
+``` console
 ~$ python manage.py createsuperuser
+```
+
+Executando o servidor
+```
 ~$ python manage.py runserver
 ```
 
