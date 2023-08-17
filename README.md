@@ -26,7 +26,7 @@ Sistema de controle de estoque para papelarias feito com python, django e bootst
 
 ## 5. Adicione uma loja central/distribuidora
 1. Visite a página admin do Django em localhost:port/admin (porta padrão: `http://localhost:8000/admin`) e insira as informações do administrador criado com o comando createsuperuser
-2. Na seção ESTOQUE, selecione Adicionar na linha/opção Empresas
-3. Em Usuário selecione a conta admin criada
-4. Desmarque a opção Filial, insira um endereço e salve
-5. Selecione ENCERRAR SESSÃO (canto superior direito)
+2. Na seção `ESTOQUE`, selecione `Adicionar` na linha/opção `Empresas`
+3. Em `Usuário` selecione a conta admin criada
+4. Desmarque a opção `Filial`, insira um endereço e salve
+5. Selecione `ENCERRAR SESSÃO` (canto superior direito)
