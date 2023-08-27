@@ -1,4 +1,4 @@
-# Descrição
+# Trabalho de conclusão de curso
 Sistema de controle de estoque para papelarias feito com python, django e bootstrap.
 
 # Executando o projeto
